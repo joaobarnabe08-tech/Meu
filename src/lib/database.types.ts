@@ -69,6 +69,11 @@ export type Database = {
           subcutaneous_fat: number | null;
           metabolic_age: number | null;
           inbody_score: number | null;
+          muscle_rate: number | null;
+          skeletal_muscle_percentage: number | null;
+          protein_percentage: number | null;
+          body_water_percentage: number | null;
+          smi: number | null;
           shoulder_circumference: number | null;
           chest_circumference: number | null;
           right_arm_circumference: number | null;
