@@ -1,12 +1,14 @@
 import { useState, useRef } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, Menu, X, Activity, ChevronRight, Upload, ImageIcon, BookOpen,
+  LayoutDashboard, Users, Menu, X, Activity, ChevronRight, Upload, ImageIcon, BookOpen, Dumbbell, ToggleLeft, ToggleRight,
 } from 'lucide-react';
+import { useAppMode } from '../App';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/clientes', label: 'Clientes', icon: Users },
+  { path: '/exercicios', label: 'Exercícios', icon: Dumbbell },
   { path: '/alimentos', label: 'Alimentos', icon: BookOpen },
 ];
 
@@ -79,30 +81,64 @@ export default function AppLayout() {
     </div>
   );
 
-  const NavItems = ({ onClose }: { onClose?: () => void }) => (
-    <nav className="flex-1 px-3 py-4 space-y-1">
-      {navItems.map((item) => {
-        const Icon = item.icon;
-        const active = isActive(item.path);
-        return (
-          <Link
-            key={item.path}
-            to={item.path}
-            onClick={onClose}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              active
-                ? 'bg-emerald-500/15 text-emerald-400'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <Icon className="w-5 h-5 shrink-0" />
-            {item.label}
-            {active && <ChevronRight className="w-4 h-4 ml-auto" />}
-          </Link>
-        );
-      })}
-    </nav>
-  );
+  const NavItems = ({ onClose }: { onClose?: () => void }) => {
+    const { mode, setMode, isTrainer } = useAppMode();
+    return (
+      <nav className="flex-1 px-3 py-4 space-y-1">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={onClose}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                active
+                  ? 'bg-emerald-500/15 text-emerald-400'
+                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+              }`}
+            >
+              <Icon className="w-5 h-5 shrink-0" />
+              {item.label}
+              {active && <ChevronRight className="w-4 h-4 ml-auto" />}
+            </Link>
+          );
+        })}
+
+        {/* Mode Toggle */}
+        <div className="pt-4 mt-4 border-t border-slate-700">
+          <div className="px-3 py-2">
+            <p className="text-xs text-slate-400 font-medium mb-2">Modo de Visualização</p>
+            <div className="flex bg-slate-800 rounded-lg p-0.5">
+              <button
+                onClick={() => setMode('trainer')}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  isTrainer
+                    ? 'bg-emerald-500 text-white'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                Treinador
+              </button>
+              <button
+                onClick={() => setMode('client')}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  !isTrainer
+                    ? 'bg-blue-500 text-white'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" />
+                Cliente
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -112,12 +148,22 @@ export default function AppLayout() {
         <NavItems />
         <div className="px-4 py-4 border-t border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center">
-              <Activity className="w-4 h-4 text-emerald-400" />
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+              useAppMode().isTrainer ? 'bg-slate-700' : 'bg-blue-500/20'
+            }`}>
+              {useAppMode().isTrainer ? (
+                <Users className="w-4 h-4 text-emerald-400" />
+              ) : (
+                <Activity className="w-4 h-4 text-blue-400" />
+              )}
             </div>
             <div>
-              <p className="text-sm font-medium text-white">Personal Trainer</p>
-              <p className="text-xs text-slate-400">fitpro@studio.pt</p>
+              <p className="text-sm font-medium text-white">
+                {useAppMode().isTrainer ? 'Modo Treinador' : 'Modo Cliente'}
+              </p>
+              <p className="text-xs text-slate-400">
+                {useAppMode().isTrainer ? 'Edição completa' : 'Só visualização'}
+              </p>
             </div>
           </div>
         </div>

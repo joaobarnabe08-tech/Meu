@@ -93,6 +93,15 @@ export default function ClientDetail() {
       parq_medication: updated.parq_medication,
       parq_other_reason: updated.parq_other_reason,
       parq_notes: updated.parq_notes,
+      trains_currently: updated.trains_currently,
+      training_duration: updated.training_duration,
+      training_frequency: updated.training_frequency,
+      sedentary_habits: updated.sedentary_habits,
+      smokes: updated.smokes,
+      cigarettes_per_day: updated.cigarettes_per_day,
+      sleep_hours: updated.sleep_hours,
+      meals_per_day: updated.meals_per_day,
+      hydration_liters: updated.hydration_liters,
       updated_at: new Date().toISOString(),
     }).eq('id', updated.id).select().single();
     if (data) setAnamnese(data);

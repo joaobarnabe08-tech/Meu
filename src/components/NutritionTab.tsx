@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plus, X, ChevronDown, ChevronUp, UtensilsCrossed, Flame, Beef, Wheat, Droplets, Trash2, Clock, Search, BookOpen } from 'lucide-react';
+import { Plus, X, ChevronDown, ChevronUp, UtensilsCrossed, Flame, Beef, Wheat, Droplets, Trash2, Clock, Search, BookOpen, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { PlanWithMeals } from '../pages/ClientDetail';
 import type { Database } from '../lib/database.types';
+import { useAppMode } from '../App';
 
 type FoodLibItem = Database['public']['Tables']['foods_library']['Row'];
 
@@ -152,6 +153,8 @@ export default function NutritionTab({
   onDeletePlan: (planId: string) => Promise<void>;
   foodsLibrary: FoodLibItem[];
 }) {
+  const { isTrainer } = useAppMode();
+  const canEdit = isTrainer;
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [showPlanForm, setShowPlanForm] = useState(false);
@@ -220,14 +223,23 @@ export default function NutritionTab({
           >
             <BookOpen className="w-4 h-4" /> Base de Dados
           </button>
-          <button
-            onClick={() => setShowPlanForm(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" /> Novo Plano
-          </button>
+          {canEdit && (
+            <button
+              onClick={() => setShowPlanForm(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Novo Plano
+            </button>
+          )}
         </div>
       </div>
+
+      {!isTrainer && (
+        <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 text-sm">
+          <Eye className="w-4 h-4" />
+          Modo de visualização - As alterações estão desativadas
+        </div>
+      )}
 
       {activePlan && plans.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -268,9 +280,11 @@ export default function NutritionTab({
                 </button>
                 <div className="flex items-center gap-2 shrink-0">
                   {plan.is_active && <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">Ativo</span>}
-                  <button onClick={() => { if (confirm('Eliminar este plano?')) onDeletePlan(plan.id); }} className="w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {canEdit && (
+                    <button onClick={() => { if (confirm('Eliminar este plano?')) onDeletePlan(plan.id); }} className="w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                   <button onClick={() => setExpanded(p => ({ ...p, [plan.id]: !isOpen }))}>
                     {isOpen ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
                   </button>
@@ -288,9 +302,11 @@ export default function NutritionTab({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <h4 className="font-semibold text-slate-900">{meal.meal_name}</h4>
-                          <button onClick={() => onDeleteMeal(plan.id, meal.id)} className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded flex items-center justify-center text-slate-300 hover:text-rose-500 transition-all">
-                            <X className="w-3.5 h-3.5" />
-                          </button>
+                          {canEdit && (
+                            <button onClick={() => onDeleteMeal(plan.id, meal.id)} className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded flex items-center justify-center text-slate-300 hover:text-rose-500 transition-all">
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          )}
                         </div>
                         <p className="text-sm text-slate-600 mt-0.5">{meal.foods}</p>
                         <div className="flex flex-wrap gap-2 mt-2">
@@ -387,7 +403,7 @@ export default function NutritionTab({
                         </button>
                       </div>
                     </form>
-                  ) : (
+                  ) : canEdit && (
                     <button onClick={() => setAddingMealTo(plan.id)}
                       className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border-2 border-dashed border-slate-200 text-sm text-slate-400 hover:border-amber-300 hover:text-amber-600 transition-colors">
                       <Plus className="w-4 h-4" /> Adicionar Refeição

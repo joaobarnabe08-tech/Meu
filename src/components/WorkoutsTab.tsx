@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plus, X, ChevronDown, ChevronUp, Dumbbell, Clock, Trash2, Play, Search, ExternalLink } from 'lucide-react';
+import { Plus, X, ChevronDown, ChevronUp, Dumbbell, Clock, Trash2, Play, Search, ExternalLink, Eye } from 'lucide-react';
 import type { WorkoutWithExercises } from '../pages/ClientDetail';
 import type { Database } from '../lib/database.types';
+import { useAppMode } from '../App';
 
 type ExerciseLibItem = Database['public']['Tables']['exercises_library']['Row'];
 
@@ -118,6 +119,9 @@ export default function WorkoutsTab({
   onDeleteWorkout: (workoutId: string) => Promise<void>;
   exercisesLibrary: ExerciseLibItem[];
 }) {
+  const { isTrainer } = useAppMode();
+  const canEdit = isTrainer;
+
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
   const [workoutForm, setWorkoutForm] = useState({ name: '', description: '' });
@@ -160,13 +164,22 @@ export default function WorkoutsTab({
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-slate-900">Programas de Treino</h2>
-        <button
-          onClick={() => setShowWorkoutForm(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
-        >
-          <Plus className="w-4 h-4" /> Novo Treino
-        </button>
+        {canEdit && (
+          <button
+            onClick={() => setShowWorkoutForm(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Novo Treino
+          </button>
+        )}
       </div>
+
+      {!isTrainer && (
+        <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 text-sm">
+          <Eye className="w-4 h-4" />
+          Modo de visualização - As alterações estão desativadas
+        </div>
+      )}
 
       <div className="space-y-4">
         {workouts.map(w => {
@@ -189,12 +202,14 @@ export default function WorkoutsTab({
                 </button>
                 <div className="flex items-center gap-2 shrink-0">
                   {w.is_active && <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">Ativo</span>}
-                  <button
-                    onClick={() => { if (confirm('Eliminar este treino?')) onDeleteWorkout(w.id); }}
-                    className="w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {canEdit && (
+                    <button
+                      onClick={() => { if (confirm('Eliminar este treino?')) onDeleteWorkout(w.id); }}
+                      className="w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                   <button onClick={() => setExpanded(p => ({ ...p, [w.id]: !isOpen }))}>
                     {isOpen ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
                   </button>
@@ -247,12 +262,14 @@ export default function WorkoutsTab({
                               )}
                             </td>
                             <td className="px-3 py-2.5">
-                              <button
-                                onClick={() => onDeleteExercise(w.id, ex.id)}
-                                className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded flex items-center justify-center text-slate-300 hover:text-rose-500 transition-all"
-                              >
-                                <X className="w-3.5 h-3.5" />
-                              </button>
+                              {canEdit && (
+                                <button
+                                  onClick={() => onDeleteExercise(w.id, ex.id)}
+                                  className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded flex items-center justify-center text-slate-300 hover:text-rose-500 transition-all"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -308,7 +325,7 @@ export default function WorkoutsTab({
                         </button>
                       </div>
                     </form>
-                  ) : (
+                  ) : canEdit && (
                     <button
                       onClick={() => setAddingExerciseTo(w.id)}
                       className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border-2 border-dashed border-slate-200 text-sm text-slate-400 hover:border-emerald-300 hover:text-emerald-600 transition-colors"
