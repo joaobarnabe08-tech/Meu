@@ -257,7 +257,7 @@ export default function ClientDetail() {
         <ProfileTab client={client} anamnese={anamnese} onSaveAnamnese={saveAnamnese} />
       )}
       {tab === 'assessments' && (
-        <AssessmentsTab assessments={assessments} onAdd={addAssessment} clientId={clienteId} />
+        <AssessmentsTab assessments={assessments} onAdd={addAssessment} clientId={clienteId} clientBirthDate={client.birth_date} />
       )}
       {tab === 'workouts' && (
         <WorkoutsTab
