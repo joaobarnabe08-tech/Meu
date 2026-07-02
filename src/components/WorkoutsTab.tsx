@@ -218,7 +218,8 @@ export default function WorkoutsTab({
 
               {isOpen && (
                 <div className="px-5 pb-5 space-y-3">
-                  <div className="overflow-x-auto rounded-lg border border-slate-100">
+                  {/* Mobile: cards / Desktop: table */}
+                  <div className="hidden sm:block overflow-x-auto rounded-lg border border-slate-100">
                     <table className="w-full text-sm">
                       <thead className="bg-slate-50">
                         <tr>
@@ -278,6 +279,39 @@ export default function WorkoutsTab({
                         )}
                       </tbody>
                     </table>
+                  </div>
+
+                  {/* Mobile: card layout */}
+                  <div className="sm:hidden space-y-2">
+                    {w.exercises.map((ex, i) => (
+                      <div key={ex.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                        <div className="flex items-start gap-2">
+                          <span className="w-6 h-6 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">{i + 1}</span>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-medium text-slate-900 text-sm">{ex.exercise_name}</span>
+                            {ex.notes && <p className="text-xs text-slate-400 mt-0.5">{ex.notes}</p>}
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              <span className="text-xs text-slate-600 bg-white px-2 py-1 rounded-md border border-slate-200">{ex.sets} séries</span>
+                              <span className="text-xs text-slate-600 bg-white px-2 py-1 rounded-md border border-slate-200">{ex.reps} reps</span>
+                              {ex.rest_seconds && <span className="text-xs text-slate-600 bg-white px-2 py-1 rounded-md border border-slate-200"><Clock className="w-3 h-3 inline mr-0.5" />{ex.rest_seconds}s</span>}
+                              {ex.video_url && (
+                                <button onClick={() => setVideoModal({ url: ex.video_url!, name: ex.exercise_name })} className="text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 font-medium">
+                                  <Play className="w-3 h-3 inline mr-0.5" />Ver
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                          {canEdit && (
+                            <button onClick={() => onDeleteExercise(w.id, ex.id)} className="w-7 h-7 rounded flex items-center justify-center text-slate-300 hover:text-rose-500 transition-colors shrink-0">
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {w.exercises.length === 0 && (
+                      <p className="px-3 py-5 text-center text-slate-400 text-sm">Sem exercícios. Adicione o primeiro abaixo.</p>
+                    )}
                   </div>
 
                   {addingHere ? (

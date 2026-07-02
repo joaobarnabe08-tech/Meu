@@ -591,7 +591,8 @@ export default function AssessmentsTab({
             </button>
           )}
         </div>
-        <div className="overflow-x-auto">
+        {/* Desktop: table */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
@@ -620,6 +621,29 @@ export default function AssessmentsTab({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile: cards */}
+        <div className="sm:hidden divide-y divide-slate-100">
+          {[...historyRows].reverse().map(a => (
+            <div key={a.id} className="px-4 py-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium text-slate-900 text-sm">{a.assessment_date}</span>
+                {a.inbody_score != null && <span className="text-xs font-semibold text-teal-700">{a.inbody_score} pts</span>}
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div><span className="text-slate-400">Peso: </span><span className="text-slate-700 font-medium">{a.weight != null ? `${a.weight}kg` : '—'}</span></div>
+                <div><span className="text-slate-400">IMC: </span><span className="text-slate-700 font-medium">{a.imc ?? '—'}</span></div>
+                <div><span className="text-slate-400">Gordura: </span><span className="text-slate-700 font-medium">{a.body_fat_percentage != null ? `${a.body_fat_percentage}%` : '—'}</span></div>
+                <div><span className="text-slate-400">Musc: </span><span className="text-slate-700 font-medium">{a.muscle_mass != null ? `${a.muscle_mass}kg` : '—'}</span></div>
+                <div><span className="text-slate-400">TMB: </span><span className="text-slate-700 font-medium">{a.basal_metabolic_rate ?? '—'}</span></div>
+                <div><span className="text-slate-400">WHR: </span><span className="text-slate-700 font-medium">{a.waist_hip_ratio ?? '—'}</span></div>
+              </div>
+            </div>
+          ))}
+          {assessments.length === 0 && (
+            <div className="px-4 py-10 text-center text-slate-400">Nenhuma avaliação registada.</div>
+          )}
         </div>
       </div>
 

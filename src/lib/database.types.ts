@@ -13,9 +13,24 @@ export type Database = {
           gender: string | null;
           notes: string | null;
           created_at: string | null;
+          auth_user_id: string | null;
         };
         Insert: Omit<Database['public']['Tables']['clients']['Row'], 'created_at'> & { created_at?: string | null };
         Update: Partial<Database['public']['Tables']['clients']['Row']>;
+      };
+      invites: {
+        Row: {
+          id: string;
+          client_id: string;
+          email: string;
+          token: string;
+          status: string;
+          expires_at: string;
+          created_at: string | null;
+          accepted_at: string | null;
+        };
+        Insert: Omit<Database['public']['Tables']['invites']['Row'], 'id' | 'token' | 'created_at' | 'accepted_at'> & { id?: string; token?: string; created_at?: string | null; accepted_at?: string | null };
+        Update: Partial<Database['public']['Tables']['invites']['Row']>;
       };
       anamneses: {
         Row: {

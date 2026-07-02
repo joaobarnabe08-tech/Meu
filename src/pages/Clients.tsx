@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, User, Phone, Mail, ArrowRight, X, Pencil } from 'lucide-react';
+import { Search, Plus, User, Phone, Mail, ArrowRight, X, Pencil, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
 
@@ -17,6 +17,10 @@ export default function Clients() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [inviteModal, setInviteModal] = useState<Client | null>(null);
+  const [inviteStatus, setInviteStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [inviteError, setInviteError] = useState('');
+  const [inviteUrl, setInviteUrl] = useState('');
 
   useEffect(() => {
     load();
@@ -44,6 +48,41 @@ export default function Clients() {
     setForm(emptyForm);
     setError('');
     setShowForm(true);
+  }
+
+  function openInvite(client: Client) {
+    setInviteModal(client);
+    setInviteStatus('idle');
+    setInviteError('');
+    setInviteUrl('');
+  }
+
+  async function sendInvite(client: Client) {
+    setInviteStatus('sending');
+    try {
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`;
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          client_id: client.id,
+          email: client.email,
+          client_name: client.name,
+        }),
+      });
+      if (!response.ok) throw new Error(`Erro ${response.status}`);
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      setInviteUrl(data.activation_url || '');
+      setInviteStatus('sent');
+      load();
+    } catch (err: any) {
+      setInviteError(err.message || 'Erro ao enviar convite');
+      setInviteStatus('error');
+    }
   }
 
   function openEdit(e: React.MouseEvent, client: Client) {
@@ -114,6 +153,11 @@ export default function Clients() {
         </button>
       </div>
 
+      <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 text-sm">
+        <Send className="w-4 h-4 shrink-0" />
+        <span>Envia um convite para cada cliente aceder à sua área pessoal na app.</span>
+      </div>
+
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         <input
@@ -137,13 +181,27 @@ export default function Clients() {
               to={`/clientes/${client.id}`}
               className="group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all relative"
             >
-              <button
-                onClick={e => openEdit(e, client)}
-                className="absolute top-3 right-3 w-7 h-7 rounded-lg bg-slate-100 hover:bg-emerald-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
-                title="Editar cliente"
-              >
-                <Pencil className="w-3.5 h-3.5 text-slate-500 hover:text-emerald-600" />
-              </button>
+              <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                {client.auth_user_id && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-medium border border-emerald-100" title="Conta ativada">
+                    <CheckCircle2 className="w-3 h-3" /> Ativa
+                  </span>
+                )}
+                <button
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); openInvite(client); }}
+                  className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-blue-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+                  title="Enviar convite"
+                >
+                  <Send className="w-3.5 h-3.5 text-slate-500 hover:text-blue-600" />
+                </button>
+                <button
+                  onClick={e => openEdit(e, client)}
+                  className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-emerald-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+                  title="Editar cliente"
+                >
+                  <Pencil className="w-3.5 h-3.5 text-slate-500 hover:text-emerald-600" />
+                </button>
+              </div>
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg shrink-0">
                   {client.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
@@ -185,6 +243,89 @@ export default function Clients() {
           <User className="w-12 h-12 text-slate-300 mx-auto mb-3" />
           <p className="text-slate-500 font-medium">Nenhum cliente encontrado</p>
           <p className="text-sm text-slate-400 mt-1">Ajuste a pesquisa ou adicione um novo cliente.</p>
+        </div>
+      )}
+
+      {inviteModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+              <h2 className="font-bold text-lg text-slate-900">Enviar Convite</h2>
+              <button onClick={() => { setInviteModal(null); setInviteStatus('idle'); setInviteError(''); setInviteUrl(''); }} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-sm shrink-0">
+                  {inviteModal.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-slate-900 truncate">{inviteModal.name}</p>
+                  <p className="text-sm text-slate-500 truncate">{inviteModal.email || 'Sem email'}</p>
+                </div>
+              </div>
+
+              {inviteStatus === 'idle' && (
+                <>
+                  <p className="text-sm text-slate-600">
+                    O cliente receberá um email com um link para ativar a conta e definir a palavra-passe. Depois de ativar, terá acesso à sua área pessoal (apenas leitura).
+                  </p>
+                  {!inviteModal.email && (
+                    <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span>Este cliente não tem email registado. Adiciona um email antes de enviar o convite.</span>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => sendInvite(inviteModal)}
+                    disabled={!inviteModal.email}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                  >
+                    <Send className="w-4 h-4" /> Enviar Convite
+                  </button>
+                </>
+              )}
+
+              {inviteStatus === 'sending' && (
+                <div className="flex flex-col items-center py-6">
+                  <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mb-3" />
+                  <p className="text-sm text-slate-500">A enviar convite...</p>
+                </div>
+              )}
+
+              {inviteStatus === 'sent' && (
+                <div className="text-center py-4">
+                  <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
+                  <p className="font-semibold text-slate-900 mb-1">Convite enviado!</p>
+                  <p className="text-sm text-slate-500 mb-4">O email foi enviado para <strong>{inviteModal.email}</strong></p>
+                  {inviteUrl && (
+                    <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                      <p className="text-xs text-slate-500 mb-1">Link de ativação (partilha manual se necessário):</p>
+                      <div className="flex items-center gap-2">
+                        <input readOnly value={inviteUrl} className="flex-1 px-2 py-1.5 text-xs bg-white border border-slate-200 rounded text-slate-600" />
+                        <button onClick={() => navigator.clipboard.writeText(inviteUrl)} className="px-2 py-1.5 text-xs bg-slate-200 rounded hover:bg-slate-300 transition-colors">Copiar</button>
+                      </div>
+                    </div>
+                  )}
+                  <button onClick={() => { setInviteModal(null); setInviteStatus('idle'); setInviteUrl(''); }} className="mt-4 text-sm text-emerald-600 font-medium hover:text-emerald-700">
+                    Fechar
+                  </button>
+                </div>
+              )}
+
+              {inviteStatus === 'error' && (
+                <div className="text-center py-4">
+                  <AlertCircle className="w-12 h-12 text-rose-400 mx-auto mb-3" />
+                  <p className="font-semibold text-slate-900 mb-1">Erro ao enviar</p>
+                  <p className="text-sm text-rose-500 mb-4">{inviteError}</p>
+                  <button onClick={() => setInviteStatus('idle')} className="text-sm text-emerald-600 font-medium hover:text-emerald-700">
+                    Tentar novamente
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
