@@ -1,11 +1,11 @@
 {
-  "name": "FitPro - Plataforma de Personal Training",
-  "short_name": "FitPro",
+  "name": "Viper Factory - Plataforma de Personal Training",
+  "short_name": "Viper Factory",
   "description": "Gestão de clientes, treinos, nutrição e avaliações para personal trainers.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#059669",
+  "background_color": "#0B0B0B",
+  "theme_color": "#D4AF37",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "pt-PT",
@@ -34,14 +34,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/icons/screenshot-mobile.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow"
     }
   ]
 }

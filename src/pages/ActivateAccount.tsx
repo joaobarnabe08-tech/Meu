@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Dumbbell, Lock, Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Lock, Mail, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
+import Logo from '../components/Logo';
+import { BRANDING } from '../lib/branding';
 
 export default function ActivateAccount() {
   const [params] = useSearchParams();
@@ -118,30 +120,30 @@ export default function ActivateAccount() {
   }, [user, clientProfile, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-slate-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-viper-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/30 mb-4">
-            <Dumbbell className="w-8 h-8 text-white" />
+          <div className="flex justify-center mb-4">
+            <Logo size="lg" showText={false} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">FitPro</h1>
-          <p className="text-slate-500 mt-1 text-sm">Ativação de Conta</p>
+          <h1 className="text-2xl font-bold text-viper-900">{BRANDING.name}</h1>
+          <p className="text-viper-500 mt-1 text-sm">Ativação de Conta</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-viper-200 p-8">
           {step === 'loading' && (
             <div className="flex flex-col items-center py-8">
-              <Loader2 className="w-8 h-8 text-emerald-500 animate-spin mb-3" />
-              <p className="text-sm text-slate-500">A verificar convite...</p>
+              <Loader2 className="w-8 h-8 text-gold-400 animate-spin mb-3" />
+              <p className="text-sm text-viper-500">A verificar convite...</p>
             </div>
           )}
 
           {step === 'error' && (
             <div className="text-center py-6">
-              <AlertCircle className="w-12 h-12 text-rose-400 mx-auto mb-4" />
-              <h2 className="text-lg font-bold text-slate-900 mb-2">Convite inválido</h2>
-              <p className="text-sm text-slate-500 mb-6">O link de convite não é válido ou foi removido.</p>
-              <button onClick={() => navigate('/login')} className="text-sm text-emerald-600 font-medium hover:text-emerald-700">
+              <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
+              <h2 className="text-lg font-bold text-viper-900 mb-2">Convite inválido</h2>
+              <p className="text-sm text-viper-500 mb-6">O link de convite não é válido ou foi removido.</p>
+              <button onClick={() => navigate('/login')} className="text-sm text-gold-600 font-medium hover:text-gold-500">
                 Ir para início de sessão
               </button>
             </div>
@@ -149,22 +151,22 @@ export default function ActivateAccount() {
 
           {step === 'expired' && (
             <div className="text-center py-6">
-              <AlertCircle className="w-12 h-12 text-amber-400 mx-auto mb-4" />
-              <h2 className="text-lg font-bold text-slate-900 mb-2">Convite expirado</h2>
-              <p className="text-sm text-slate-500 mb-6">Este convite expirou. Contacta o teu treinador para receber um novo.</p>
+              <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+              <h2 className="text-lg font-bold text-viper-900 mb-2">Convite expirado</h2>
+              <p className="text-sm text-viper-500 mb-6">Este convite expirou. Contacta o teu treinador para receber um novo.</p>
             </div>
           )}
 
           {step === 'form' && invite && (
             <>
-              <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-                <p className="text-sm text-emerald-700">
+              <div className="mb-6 p-4 bg-gold-400/10 border border-gold-400/30 rounded-xl">
+                <p className="text-sm text-gold-700">
                   Olá <strong>{invite.client_name}</strong>! Define a tua palavra-passe para ativar a conta associada a <strong>{invite.email}</strong>.
                 </p>
               </div>
 
               {error && (
-                <div className="mb-4 flex items-start gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-sm">
+                <div className="mb-4 flex items-start gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-600 text-sm">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                   <span>{error}</span>
                 </div>
@@ -172,20 +174,20 @@ export default function ActivateAccount() {
 
               <form onSubmit={handleActivate} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+                  <label className="block text-sm font-medium text-viper-700 mb-1.5">Email</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       type="email"
                       disabled
                       value={invite.email}
-                      className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-500"
+                      className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm bg-viper-50 text-viper-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Palavra-passe</label>
+                  <label className="block text-sm font-medium text-viper-700 mb-1.5">Palavra-passe</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
@@ -193,14 +195,14 @@ export default function ActivateAccount() {
                       required
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                      className="w-full pl-10 pr-3 py-2.5 border border-viper-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400"
                       placeholder="Mínimo 6 caracteres"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Confirmar palavra-passe</label>
+                  <label className="block text-sm font-medium text-viper-700 mb-1.5">Confirmar palavra-passe</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
@@ -208,7 +210,7 @@ export default function ActivateAccount() {
                       required
                       value={confirmPassword}
                       onChange={e => setConfirmPassword(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                      className="w-full pl-10 pr-3 py-2.5 border border-viper-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400"
                       placeholder="••••••••"
                     />
                   </div>
@@ -217,7 +219,7 @@ export default function ActivateAccount() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-gold-400 to-gold-500 text-viper-900 rounded-lg text-sm font-bold hover:from-gold-300 hover:to-gold-400 transition-all disabled:opacity-50 shadow-lg shadow-gold-500/20"
                 >
                   {submitting ? 'A ativar...' : 'Ativar Conta'}
                 </button>
@@ -227,10 +229,10 @@ export default function ActivateAccount() {
 
           {step === 'success' && (
             <div className="text-center py-8">
-              <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
-              <h2 className="text-xl font-bold text-slate-900 mb-2">Conta ativada!</h2>
-              <p className="text-sm text-slate-500 mb-6">A tua conta foi criada com sucesso. Vais ser redirecionado para iniciar sessão.</p>
-              <Loader2 className="w-5 h-5 text-emerald-500 animate-spin mx-auto" />
+              <CheckCircle2 className="w-16 h-16 text-gold-400 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-viper-900 mb-2">Conta ativada!</h2>
+              <p className="text-sm text-viper-500 mb-6">A tua conta foi criada com sucesso. Vais ser redirecionado para iniciar sessão.</p>
+              <Loader2 className="w-5 h-5 text-gold-400 animate-spin mx-auto" />
             </div>
           )}
         </div>

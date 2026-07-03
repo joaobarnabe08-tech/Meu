@@ -10,8 +10,8 @@ const CATEGORIES = [
   'Vegetais', 'Gorduras', 'Leguminosas', 'Suplementos', 'Outro',
 ];
 
-const IC = "w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500";
-const NUM_IC = "w-full px-2 py-1.5 border border-slate-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500";
+const IC = "w-full px-3 py-2 border border-viper-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400";
+const NUM_IC = "w-full px-2 py-1.5 border border-viper-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400";
 
 type EditState = {
   name: string;
@@ -115,14 +115,14 @@ export default function FoodsLibrary() {
               <BookOpen className="w-5 h-5 text-amber-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Base de Dados de Alimentos</h1>
-              <p className="text-sm text-slate-500">{foods.length} alimentos · valores nutricionais por 100g</p>
+              <h1 className="text-2xl font-bold text-viper-900">Base de Dados de Alimentos</h1>
+              <p className="text-sm text-viper-500">{foods.length} alimentos · valores nutricionais por 100g</p>
             </div>
           </div>
         </div>
         <button
           onClick={() => { setAddState(EMPTY_EDIT); setShowAdd(true); }}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-gold-500 text-white rounded-lg text-sm font-medium hover:bg-gold-600 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" /> Adicionar Alimento
         </button>
@@ -131,30 +131,30 @@ export default function FoodsLibrary() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="Pesquisar alimento..." />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-viper-400" />
+          <input value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-10 pr-3 py-2.5 border border-viper-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400" placeholder="Pesquisar alimento..." />
         </div>
-        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="px-3 py-2.5 border border-viper-200 rounded-xl text-sm bg-white text-viper-700 focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400">
           <option value="">Todas as categorias</option>
           {categories.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-viper-200 shadow-sm overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-slate-400 text-sm">A carregar...</div>
+          <div className="p-8 text-center text-viper-400 text-sm">A carregar...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-viper-50 border-b border-viper-200">
                 <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">Nome</th>
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600 hidden sm:table-cell">Categoria</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600">kcal</th>
+                  <th className="text-left px-4 py-3 font-semibold text-viper-600">Nome</th>
+                  <th className="text-left px-4 py-3 font-semibold text-viper-600 hidden sm:table-cell">Categoria</th>
+                  <th className="text-center px-3 py-3 font-semibold text-viper-600">kcal</th>
                   <th className="text-center px-3 py-3 font-semibold text-blue-600">Prot.</th>
                   <th className="text-center px-3 py-3 font-semibold text-amber-600">Carbs</th>
-                  <th className="text-center px-3 py-3 font-semibold text-emerald-600">Gord.</th>
+                  <th className="text-center px-3 py-3 font-semibold text-gold-600">Gord.</th>
                   <th className="w-20 px-3 py-3"></th>
                 </tr>
               </thead>
@@ -162,7 +162,7 @@ export default function FoodsLibrary() {
                 {filtered.map(food => {
                   const isEditing = editingId === food.id;
                   return (
-                    <tr key={food.id} className={`hover:bg-slate-50 group transition-colors ${isEditing ? 'bg-emerald-50/50' : ''}`}>
+                    <tr key={food.id} className={`hover:bg-viper-50 group transition-colors ${isEditing ? 'bg-gold-50/50' : ''}`}>
                       {isEditing ? (
                         <>
                           <td className="px-4 py-2">
@@ -179,10 +179,10 @@ export default function FoodsLibrary() {
                           <td className="px-3 py-2"><input type="number" step="0.1" value={editState.fats} onChange={e => setEditState(s => ({ ...s, fats: e.target.value }))} className={NUM_IC} /></td>
                           <td className="px-3 py-2">
                             <div className="flex items-center gap-1">
-                              <button onClick={() => saveEdit(food.id)} disabled={saving} className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 hover:bg-emerald-200 transition-colors">
+                              <button onClick={() => saveEdit(food.id)} disabled={saving} className="w-7 h-7 rounded-lg bg-gold-100 flex items-center justify-center text-gold-700 hover:bg-gold-200 transition-colors">
                                 <Check className="w-3.5 h-3.5" />
                               </button>
-                              <button onClick={() => setEditingId(null)} className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
+                              <button onClick={() => setEditingId(null)} className="w-7 h-7 rounded-lg bg-viper-100 flex items-center justify-center text-viper-500 hover:bg-viper-200 transition-colors">
                                 <X className="w-3.5 h-3.5" />
                               </button>
                             </div>
@@ -190,22 +190,22 @@ export default function FoodsLibrary() {
                         </>
                       ) : (
                         <>
-                          <td className="px-4 py-3 font-medium text-slate-900">{food.name}</td>
+                          <td className="px-4 py-3 font-medium text-viper-900">{food.name}</td>
                           <td className="px-4 py-3 hidden sm:table-cell">
                             {food.category && (
-                              <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs">{food.category}</span>
+                              <span className="px-2 py-0.5 rounded-full bg-viper-100 text-viper-600 text-xs">{food.category}</span>
                             )}
                           </td>
                           <td className="px-3 py-3 text-center font-semibold text-rose-500">{food.calories_per_100g ?? '—'}</td>
                           <td className="px-3 py-3 text-center text-blue-600">{food.proteins_per_100g ?? '—'}g</td>
                           <td className="px-3 py-3 text-center text-amber-600">{food.carbs_per_100g ?? '—'}g</td>
-                          <td className="px-3 py-3 text-center text-emerald-600">{food.fats_per_100g ?? '—'}g</td>
+                          <td className="px-3 py-3 text-center text-gold-600">{food.fats_per_100g ?? '—'}g</td>
                           <td className="px-3 py-3">
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button onClick={() => { setEditingId(food.id); setEditState(toEdit(food)); }} className="w-7 h-7 rounded-lg hover:bg-blue-50 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors">
+                              <button onClick={() => { setEditingId(food.id); setEditState(toEdit(food)); }} className="w-7 h-7 rounded-lg hover:bg-blue-50 flex items-center justify-center text-viper-400 hover:text-blue-600 transition-colors">
                                 <Pencil className="w-3.5 h-3.5" />
                               </button>
-                              <button onClick={() => deleteFood(food.id)} className="w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors">
+                              <button onClick={() => deleteFood(food.id)} className="w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center justify-center text-viper-400 hover:text-rose-500 transition-colors">
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </div>
@@ -216,7 +216,7 @@ export default function FoodsLibrary() {
                   );
                 })}
                 {filtered.length === 0 && (
-                  <tr><td colSpan={7} className="px-4 py-10 text-center text-slate-400">Nenhum alimento encontrado.</td></tr>
+                  <tr><td colSpan={7} className="px-4 py-10 text-center text-viper-400">Nenhum alimento encontrado.</td></tr>
                 )}
               </tbody>
             </table>
@@ -228,45 +228,45 @@ export default function FoodsLibrary() {
       {showAdd && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-              <h2 className="font-bold text-lg text-slate-900">Novo Alimento</h2>
-              <button onClick={() => setShowAdd(false)}><X className="w-5 h-5 text-slate-400" /></button>
+            <div className="flex items-center justify-between px-6 py-5 border-b border-viper-100">
+              <h2 className="font-bold text-lg text-viper-900">Novo Alimento</h2>
+              <button onClick={() => setShowAdd(false)}><X className="w-5 h-5 text-viper-400" /></button>
             </div>
             <form onSubmit={addFood} className="p-6 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Nome *</label>
+                  <label className="block text-sm font-medium text-viper-700 mb-1">Nome *</label>
                   <input required value={addState.name} onChange={e => setAddState(s => ({ ...s, name: e.target.value }))} className={IC} placeholder="Ex: Frango (peito cozido)" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Categoria</label>
+                  <label className="block text-sm font-medium text-viper-700 mb-1">Categoria</label>
                   <select value={addState.category} onChange={e => setAddState(s => ({ ...s, category: e.target.value }))} className={IC}>
                     {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
-              <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Valores por 100g</p>
+              <p className="text-xs text-viper-500 font-medium uppercase tracking-wide">Valores por 100g</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Calorias</label>
+                  <label className="block text-xs font-medium text-viper-600 mb-1">Calorias</label>
                   <input type="number" step="0.1" value={addState.calories} onChange={e => setAddState(s => ({ ...s, calories: e.target.value }))} className={IC} placeholder="165" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Proteínas (g)</label>
+                  <label className="block text-xs font-medium text-viper-600 mb-1">Proteínas (g)</label>
                   <input type="number" step="0.1" value={addState.proteins} onChange={e => setAddState(s => ({ ...s, proteins: e.target.value }))} className={IC} placeholder="31" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Carboidratos (g)</label>
+                  <label className="block text-xs font-medium text-viper-600 mb-1">Carboidratos (g)</label>
                   <input type="number" step="0.1" value={addState.carbs} onChange={e => setAddState(s => ({ ...s, carbs: e.target.value }))} className={IC} placeholder="0" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Gorduras (g)</label>
+                  <label className="block text-xs font-medium text-viper-600 mb-1">Gorduras (g)</label>
                   <input type="number" step="0.1" value={addState.fats} onChange={e => setAddState(s => ({ ...s, fats: e.target.value }))} className={IC} placeholder="3.6" />
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">Cancelar</button>
-                <button type="submit" disabled={addSaving} className="px-4 py-2 text-sm bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50">
+                <button type="button" onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-viper-700 hover:bg-viper-100 rounded-lg transition-colors">Cancelar</button>
+                <button type="submit" disabled={addSaving} className="px-4 py-2 text-sm bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-50">
                   {addSaving ? 'A guardar...' : 'Adicionar'}
                 </button>
               </div>

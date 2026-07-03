@@ -9,11 +9,11 @@ import { useAppMode } from '../App';
 
 type PhysicalAssessment = Database['public']['Tables']['physical_assessments']['Row'];
 
-const IC = "w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500";
+const IC = "w-full px-3 py-2 border border-viper-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400";
 
 const STATS = [
-  { label: 'Peso', key: 'weight', unit: 'kg', icon: TrendingDown, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { label: 'IMC', key: 'imc', unit: '', icon: Gauge, color: 'text-slate-600', bg: 'bg-slate-100' },
+  { label: 'Peso', key: 'weight', unit: 'kg', icon: TrendingDown, color: 'text-gold-600', bg: 'bg-gold-50' },
+  { label: 'IMC', key: 'imc', unit: '', icon: Gauge, color: 'text-viper-600', bg: 'bg-viper-100' },
   { label: 'Gordura Corporal', key: 'body_fat_percentage', unit: '%', icon: Droplets, color: 'text-rose-600', bg: 'bg-rose-50' },
   { label: 'Massa Muscular', key: 'muscle_mass', unit: 'kg', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50' },
   { label: 'Gordura Visceral', key: 'visceral_fat', unit: '', icon: Heart, color: 'text-orange-600', bg: 'bg-orange-50' },
@@ -71,7 +71,7 @@ const ALL_FORM_KEYS = BODY_DATA_FIELDS.map(f => f.key);
 
 // Group label styles
 const GROUP_STYLES: Record<string, string> = {
-  'Dados Corporais': 'bg-emerald-50 border-emerald-200 text-emerald-800',
+  'Dados Corporais': 'bg-gold-50 border-gold-200 text-gold-800',
   'Composição Corporal': 'bg-blue-50 border-blue-200 text-blue-800',
   'Indicadores Metabólicos': 'bg-violet-50 border-violet-200 text-violet-800',
   'Medidas Corporais': 'bg-amber-50 border-amber-200 text-amber-800',
@@ -82,7 +82,7 @@ const GROUP_STYLES: Record<string, string> = {
 const FITDAYS_GROUPS = [
   {
     label: 'Dados Corporais',
-    color: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+    color: 'bg-gold-50 border-gold-200 text-gold-800',
     fields: [
       { label: 'Peso (kg)', key: 'weight' },
       { label: 'Altura (cm)', key: 'height' },
@@ -145,14 +145,14 @@ function bpClassification(systolic: number | null, diastolic: number | null): { 
   if (systolic == null && diastolic == null) return null;
   const sys = systolic ?? 0;
   const dia = diastolic ?? 0;
-  if (sys < 120 && dia < 80) return { label: 'Ótima', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' };
-  if (sys < 130 && dia < 85) return { label: 'Normal', color: 'text-emerald-600 bg-emerald-50 border-emerald-200' };
+  if (sys < 120 && dia < 80) return { label: 'Ótima', color: 'text-gold-700 bg-gold-50 border-gold-200' };
+  if (sys < 130 && dia < 85) return { label: 'Normal', color: 'text-gold-600 bg-gold-50 border-gold-200' };
   if (sys < 140 && dia < 90) return { label: 'Normal Alta', color: 'text-amber-700 bg-amber-50 border-amber-200' };
   if (sys >= 180 || dia >= 110) return { label: 'Hipertensão Grau 3', color: 'text-red-700 bg-red-100 border-red-300' };
   if (sys >= 160 || dia >= 100) return { label: 'Hipertensão Grau 2', color: 'text-red-600 bg-red-50 border-red-200' };
   if (sys >= 140 || dia >= 90) return { label: 'Hipertensão Grau 1', color: 'text-orange-700 bg-orange-50 border-orange-200' };
   if (sys < 90 || dia < 60) return { label: 'Baixa', color: 'text-blue-700 bg-blue-50 border-blue-200' };
-  return { label: 'Normal', color: 'text-emerald-600 bg-emerald-50 border-emerald-200' };
+  return { label: 'Normal', color: 'text-gold-600 bg-gold-50 border-gold-200' };
 }
 
 function BodyDiagram({ latest }: { latest: PhysicalAssessment }) {
@@ -180,19 +180,19 @@ function BodyDiagram({ latest }: { latest: PhysicalAssessment }) {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-slate-50 to-white rounded-xl border border-slate-200 p-6">
-      <h4 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+    <div className="bg-gradient-to-b from-slate-50 to-white rounded-xl border border-viper-200 p-6">
+      <h4 className="font-semibold text-viper-700 mb-4 flex items-center gap-2">
         <Ruler className="w-4 h-4" /> Mapa Corporal
       </h4>
       <div className="flex gap-4 items-stretch">
         <div className="flex flex-col justify-around gap-2 flex-1">
           {left.map(b => (
-            <div key={b.key} className={`flex items-center gap-2 justify-end px-3 py-2 rounded-lg border text-right ${b.active ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-200'}`}>
+            <div key={b.key} className={`flex items-center gap-2 justify-end px-3 py-2 rounded-lg border text-right ${b.active ? 'bg-blue-50 border-blue-200' : 'bg-viper-50 border-viper-200'}`}>
               <div>
-                <p className={`text-xs font-medium ${b.active ? 'text-blue-700' : 'text-slate-400'}`}>{b.label}</p>
-                <p className={`text-sm font-bold ${b.active ? 'text-blue-900' : 'text-slate-300'}`}>{b.active ? `${b.value} cm` : '—'}</p>
+                <p className={`text-xs font-medium ${b.active ? 'text-blue-700' : 'text-viper-400'}`}>{b.label}</p>
+                <p className={`text-sm font-bold ${b.active ? 'text-blue-900' : 'text-viper-300'}`}>{b.active ? `${b.value} cm` : '—'}</p>
               </div>
-              <div className={`w-2 h-2 rounded-full shrink-0 ${b.active ? 'bg-blue-500' : 'bg-slate-200'}`} />
+              <div className={`w-2 h-2 rounded-full shrink-0 ${b.active ? 'bg-blue-500' : 'bg-viper-200'}`} />
             </div>
           ))}
         </div>
@@ -228,7 +228,7 @@ function BodyDiagram({ latest }: { latest: PhysicalAssessment }) {
           </svg>
           <div className="w-full space-y-1 mt-2">
             {center.map(b => (
-              <div key={b.key} className={`flex items-center justify-between px-2 py-1 rounded text-xs ${b.active ? 'bg-emerald-50 text-emerald-700' : 'text-slate-400'}`}>
+              <div key={b.key} className={`flex items-center justify-between px-2 py-1 rounded text-xs ${b.active ? 'bg-gold-50 text-gold-700' : 'text-viper-400'}`}>
                 <span>{b.label}</span>
                 <span className="font-bold">{b.active ? `${b.value}cm` : '—'}</span>
               </div>
@@ -238,20 +238,20 @@ function BodyDiagram({ latest }: { latest: PhysicalAssessment }) {
 
         <div className="flex flex-col justify-around gap-2 flex-1">
           {right.map(b => (
-            <div key={b.key} className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${b.active ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-200'}`}>
-              <div className={`w-2 h-2 rounded-full shrink-0 ${b.active ? 'bg-blue-500' : 'bg-slate-200'}`} />
+            <div key={b.key} className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${b.active ? 'bg-blue-50 border-blue-200' : 'bg-viper-50 border-viper-200'}`}>
+              <div className={`w-2 h-2 rounded-full shrink-0 ${b.active ? 'bg-blue-500' : 'bg-viper-200'}`} />
               <div>
-                <p className={`text-xs font-medium ${b.active ? 'text-blue-700' : 'text-slate-400'}`}>{b.label}</p>
-                <p className={`text-sm font-bold ${b.active ? 'text-blue-900' : 'text-slate-300'}`}>{b.active ? `${b.value} cm` : '—'}</p>
+                <p className={`text-xs font-medium ${b.active ? 'text-blue-700' : 'text-viper-400'}`}>{b.label}</p>
+                <p className={`text-sm font-bold ${b.active ? 'text-blue-900' : 'text-viper-300'}`}>{b.active ? `${b.value} cm` : '—'}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className={`mt-4 flex items-center justify-between px-4 py-3 rounded-xl border ${latest.waist_hip_ratio ? 'bg-violet-50 border-violet-200' : 'bg-slate-50 border-slate-200'}`}>
-        <span className={`text-sm font-medium ${latest.waist_hip_ratio ? 'text-violet-700' : 'text-slate-400'}`}>Índice Cintura/Anca (WHR)</span>
-        <span className={`text-2xl font-bold ${latest.waist_hip_ratio ? 'text-violet-700' : 'text-slate-300'}`}>
+      <div className={`mt-4 flex items-center justify-between px-4 py-3 rounded-xl border ${latest.waist_hip_ratio ? 'bg-violet-50 border-violet-200' : 'bg-viper-50 border-viper-200'}`}>
+        <span className={`text-sm font-medium ${latest.waist_hip_ratio ? 'text-violet-700' : 'text-viper-400'}`}>Índice Cintura/Anca (WHR)</span>
+        <span className={`text-2xl font-bold ${latest.waist_hip_ratio ? 'text-violet-700' : 'text-viper-300'}`}>
           {latest.waist_hip_ratio ?? '—'}
         </span>
       </div>
@@ -352,11 +352,11 @@ export default function AssessmentsTab({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="font-bold text-slate-900">Avaliações Físicas</h2>
+        <h2 className="font-bold text-viper-900">Avaliações Físicas</h2>
         {canEdit && (
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gold-500 text-white rounded-lg text-sm font-medium hover:bg-gold-600 transition-colors shadow-sm"
           >
             <Plus className="w-4 h-4" /> Nova Avaliação
           </button>
@@ -377,14 +377,14 @@ export default function AssessmentsTab({
             const Icon = s.icon;
             const val = (latest as any)[s.key];
             return (
-              <div key={s.key} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+              <div key={s.key} className="bg-white rounded-xl border border-viper-200 p-4 shadow-sm">
                 <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center mb-2`}>
                   <Icon className={`w-4 h-4 ${s.color}`} />
                 </div>
-                <p className="text-xs text-slate-500 font-medium uppercase tracking-wide leading-none">{s.label}</p>
-                <p className="text-xl font-bold text-slate-900 mt-1">
-                  {val != null ? val : <span className="text-slate-300">—</span>}
-                  {val != null && s.unit && <span className="text-sm font-normal text-slate-400 ml-0.5">{s.unit}</span>}
+                <p className="text-xs text-viper-500 font-medium uppercase tracking-wide leading-none">{s.label}</p>
+                <p className="text-xl font-bold text-viper-900 mt-1">
+                  {val != null ? val : <span className="text-viper-300">—</span>}
+                  {val != null && s.unit && <span className="text-sm font-normal text-viper-400 ml-0.5">{s.unit}</span>}
                 </p>
               </div>
             );
@@ -394,11 +394,11 @@ export default function AssessmentsTab({
 
       {/* Latest Fitdays composition breakdown */}
       {latest && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
+        <div className="bg-white rounded-xl border border-viper-200 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-viper-100 flex items-center gap-2">
             <Activity className="w-4 h-4 text-blue-500" />
-            <h3 className="font-semibold text-slate-900">Composição Corporal — Última Avaliação</h3>
-            <span className="ml-auto text-xs text-slate-400">{latest.assessment_date}</span>
+            <h3 className="font-semibold text-viper-900">Composição Corporal — Última Avaliação</h3>
+            <span className="ml-auto text-xs text-viper-400">{latest.assessment_date}</span>
           </div>
           <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-5">
             {FITDAYS_GROUPS.map(group => (
@@ -408,9 +408,9 @@ export default function AssessmentsTab({
                   {group.fields.map(f => {
                     const v = (latest as any)[f.key];
                     return (
-                      <div key={f.key} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0">
-                        <span className="text-xs text-slate-500">{f.label}</span>
-                        <span className={`text-sm font-semibold ${v != null ? 'text-slate-900' : 'text-slate-200'}`}>
+                      <div key={f.key} className="flex items-center justify-between py-1.5 border-b border-viper-50 last:border-0">
+                        <span className="text-xs text-viper-500">{f.label}</span>
+                        <span className={`text-sm font-semibold ${v != null ? 'text-viper-900' : 'text-viper-200'}`}>
                           {v != null ? v : '—'}
                         </span>
                       </div>
@@ -426,7 +426,7 @@ export default function AssessmentsTab({
       {/* Evolution Charts */}
       {chartData.length > 1 && (
         <div className="space-y-4">
-          <h3 className="font-semibold text-slate-700">Evolução</h3>
+          <h3 className="font-semibold text-viper-700">Evolução</h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <ChartCard title="Peso (kg)">
               <AreaChart data={chartData}>
@@ -523,28 +523,28 @@ export default function AssessmentsTab({
 
       {/* Cardiovascular with BP classification */}
       {latest && (latest.systolic_bp || latest.diastolic_bp || latest.resting_hr || latest.max_hr_tanaka) && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
+        <div className="bg-white rounded-xl border border-viper-200 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-viper-100 flex items-center gap-2">
             <HeartPulse className="w-4 h-4 text-rose-500" />
-            <h3 className="font-semibold text-slate-900">Dados Cardiovasculares</h3>
+            <h3 className="font-semibold text-viper-900">Dados Cardiovasculares</h3>
           </div>
           <div className="p-5 space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
                 { key: 'systolic_bp', label: 'Pressão Sistólica', unit: 'mmHg', color: 'rose' },
                 { key: 'diastolic_bp', label: 'Pressão Diastólica', unit: 'mmHg', color: 'blue' },
-                { key: 'resting_hr', label: 'FC Repouso', unit: 'bpm', color: 'emerald' },
+                { key: 'resting_hr', label: 'FC Repouso', unit: 'bpm', color: 'gold' },
                 { key: 'max_hr_tanaka', label: 'FC Máx (Tanaka)', unit: 'bpm', color: 'amber' },
               ].map(c => {
                 const v = (latest as any)[c.key];
                 const colors: Record<string, string> = {
                   rose: 'bg-rose-50 text-rose-600 border-rose-200',
                   blue: 'bg-blue-50 text-blue-600 border-blue-200',
-                  emerald: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                  gold: 'bg-gold-50 text-gold-600 border-gold-200',
                   amber: 'bg-amber-50 text-amber-600 border-amber-200',
                 };
                 const boldColors: Record<string, string> = {
-                  rose: 'text-rose-800', blue: 'text-blue-800', emerald: 'text-emerald-800', amber: 'text-amber-800',
+                  rose: 'text-rose-800', blue: 'text-blue-800', gold: 'text-gold-800', amber: 'text-amber-800',
                 };
                 return (
                   <div key={c.key} className={`text-center p-3 rounded-xl border ${colors[c.color]}`}>
@@ -582,11 +582,11 @@ export default function AssessmentsTab({
       )}
 
       {/* History table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="font-semibold text-slate-900">Histórico de Avaliações</h3>
+      <div className="bg-white rounded-xl border border-viper-200 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-viper-100 flex items-center justify-between">
+          <h3 className="font-semibold text-viper-900">Histórico de Avaliações</h3>
           {assessments.length > 5 && (
-            <button onClick={() => setShowAllHistory(v => !v)} className="text-xs text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+            <button onClick={() => setShowAllHistory(v => !v)} className="text-xs text-gold-600 hover:text-gold-700 flex items-center gap-1">
               {showAllHistory ? <><ChevronUp className="w-3.5 h-3.5" /> Mostrar menos</> : <><ChevronDown className="w-3.5 h-3.5" /> Ver todas ({assessments.length})</>}
             </button>
           )}
@@ -594,7 +594,7 @@ export default function AssessmentsTab({
         {/* Desktop: table */}
         <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-slate-600">
+            <thead className="bg-viper-50 text-viper-600">
               <tr>
                 {['Data', 'Peso', 'IMC', 'Gordura', 'Muscular', 'Taxa Musc.', 'TMB', 'Idade Corp.', 'WHR', 'Pontuação'].map(h => (
                   <th key={h} className="text-left px-4 py-3 font-medium whitespace-nowrap text-xs">{h}</th>
@@ -603,21 +603,21 @@ export default function AssessmentsTab({
             </thead>
             <tbody className="divide-y divide-slate-100">
               {[...historyRows].reverse().map(a => (
-                <tr key={a.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">{a.assessment_date}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.weight != null ? `${a.weight} kg` : '—'}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.imc ?? '—'}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.body_fat_percentage != null ? `${a.body_fat_percentage}%` : '—'}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.muscle_mass != null ? `${a.muscle_mass} kg` : '—'}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.muscle_rate != null ? `${a.muscle_rate}%` : '—'}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.basal_metabolic_rate != null ? `${a.basal_metabolic_rate} kcal` : '—'}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.metabolic_age ?? '—'}</td>
-                  <td className="px-4 py-3 text-slate-600">{a.waist_hip_ratio ?? '—'}</td>
+                <tr key={a.id} className="hover:bg-viper-50">
+                  <td className="px-4 py-3 font-medium text-viper-900 whitespace-nowrap">{a.assessment_date}</td>
+                  <td className="px-4 py-3 text-viper-600">{a.weight != null ? `${a.weight} kg` : '—'}</td>
+                  <td className="px-4 py-3 text-viper-600">{a.imc ?? '—'}</td>
+                  <td className="px-4 py-3 text-viper-600">{a.body_fat_percentage != null ? `${a.body_fat_percentage}%` : '—'}</td>
+                  <td className="px-4 py-3 text-viper-600">{a.muscle_mass != null ? `${a.muscle_mass} kg` : '—'}</td>
+                  <td className="px-4 py-3 text-viper-600">{a.muscle_rate != null ? `${a.muscle_rate}%` : '—'}</td>
+                  <td className="px-4 py-3 text-viper-600">{a.basal_metabolic_rate != null ? `${a.basal_metabolic_rate} kcal` : '—'}</td>
+                  <td className="px-4 py-3 text-viper-600">{a.metabolic_age ?? '—'}</td>
+                  <td className="px-4 py-3 text-viper-600">{a.waist_hip_ratio ?? '—'}</td>
                   <td className="px-4 py-3 font-semibold text-teal-700">{a.inbody_score ?? '—'}</td>
                 </tr>
               ))}
               {assessments.length === 0 && (
-                <tr><td colSpan={10} className="px-4 py-10 text-center text-slate-400">Nenhuma avaliação registada.</td></tr>
+                <tr><td colSpan={10} className="px-4 py-10 text-center text-viper-400">Nenhuma avaliação registada.</td></tr>
               )}
             </tbody>
           </table>
@@ -628,21 +628,21 @@ export default function AssessmentsTab({
           {[...historyRows].reverse().map(a => (
             <div key={a.id} className="px-4 py-3">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-slate-900 text-sm">{a.assessment_date}</span>
+                <span className="font-medium text-viper-900 text-sm">{a.assessment_date}</span>
                 {a.inbody_score != null && <span className="text-xs font-semibold text-teal-700">{a.inbody_score} pts</span>}
               </div>
               <div className="grid grid-cols-3 gap-2 text-xs">
-                <div><span className="text-slate-400">Peso: </span><span className="text-slate-700 font-medium">{a.weight != null ? `${a.weight}kg` : '—'}</span></div>
-                <div><span className="text-slate-400">IMC: </span><span className="text-slate-700 font-medium">{a.imc ?? '—'}</span></div>
-                <div><span className="text-slate-400">Gordura: </span><span className="text-slate-700 font-medium">{a.body_fat_percentage != null ? `${a.body_fat_percentage}%` : '—'}</span></div>
-                <div><span className="text-slate-400">Musc: </span><span className="text-slate-700 font-medium">{a.muscle_mass != null ? `${a.muscle_mass}kg` : '—'}</span></div>
-                <div><span className="text-slate-400">TMB: </span><span className="text-slate-700 font-medium">{a.basal_metabolic_rate ?? '—'}</span></div>
-                <div><span className="text-slate-400">WHR: </span><span className="text-slate-700 font-medium">{a.waist_hip_ratio ?? '—'}</span></div>
+                <div><span className="text-viper-400">Peso: </span><span className="text-viper-700 font-medium">{a.weight != null ? `${a.weight}kg` : '—'}</span></div>
+                <div><span className="text-viper-400">IMC: </span><span className="text-viper-700 font-medium">{a.imc ?? '—'}</span></div>
+                <div><span className="text-viper-400">Gordura: </span><span className="text-viper-700 font-medium">{a.body_fat_percentage != null ? `${a.body_fat_percentage}%` : '—'}</span></div>
+                <div><span className="text-viper-400">Musc: </span><span className="text-viper-700 font-medium">{a.muscle_mass != null ? `${a.muscle_mass}kg` : '—'}</span></div>
+                <div><span className="text-viper-400">TMB: </span><span className="text-viper-700 font-medium">{a.basal_metabolic_rate ?? '—'}</span></div>
+                <div><span className="text-viper-400">WHR: </span><span className="text-viper-700 font-medium">{a.waist_hip_ratio ?? '—'}</span></div>
               </div>
             </div>
           ))}
           {assessments.length === 0 && (
-            <div className="px-4 py-10 text-center text-slate-400">Nenhuma avaliação registada.</div>
+            <div className="px-4 py-10 text-center text-viper-400">Nenhuma avaliação registada.</div>
           )}
         </div>
       </div>
@@ -651,20 +651,20 @@ export default function AssessmentsTab({
       {showForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl my-8">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white rounded-t-xl z-10">
-              <h2 className="font-bold text-lg text-slate-900">Nova Avaliação</h2>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-viper-100 sticky top-0 bg-white rounded-t-xl z-10">
+              <h2 className="font-bold text-lg text-viper-900">Nova Avaliação</h2>
+              <button onClick={() => setShowForm(false)} className="text-viper-400 hover:text-viper-600"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-6">
               {/* Date */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Data da Avaliação *</label>
+                <label className="block text-sm font-medium text-viper-700 mb-1">Data da Avaliação *</label>
                 <input
                   required
                   type="date"
                   value={form['assessment_date'] ?? ''}
                   onChange={e => setForm(prev => ({ ...prev, assessment_date: e.target.value }))}
-                  className="w-full sm:w-56 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                  className="w-full sm:w-56 px-3 py-2 border border-viper-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400"
                 />
               </div>
 
@@ -672,7 +672,7 @@ export default function AssessmentsTab({
               <div className="space-y-8">
                 {formGroups.map(group => (
                   <div key={group.label}>
-                    <div className={`inline-block text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-lg border mb-4 ${GROUP_STYLES[group.label] ?? 'bg-slate-50 border-slate-200 text-slate-700'}`}>
+                    <div className={`inline-block text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-lg border mb-4 ${GROUP_STYLES[group.label] ?? 'bg-viper-50 border-viper-200 text-viper-700'}`}>
                       {group.label}
                     </div>
 
@@ -686,7 +686,7 @@ export default function AssessmentsTab({
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                       {group.fields.map(f => (
                         <div key={f.key}>
-                          <label className="block text-xs font-medium text-slate-600 mb-1">{f.label}</label>
+                          <label className="block text-xs font-medium text-viper-600 mb-1">{f.label}</label>
                           <input
                             type="number"
                             step="0.1"
@@ -724,9 +724,9 @@ export default function AssessmentsTab({
                 ))}
               </div>
 
-              <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
-                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">Cancelar</button>
-                <button type="submit" disabled={saving || !form['assessment_date']} className="px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50">
+              <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-viper-100">
+                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-sm font-medium text-viper-700 hover:bg-viper-100 rounded-lg transition-colors">Cancelar</button>
+                <button type="submit" disabled={saving || !form['assessment_date']} className="px-4 py-2 text-sm font-medium bg-gold-500 text-white rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-50">
                   {saving ? 'A guardar...' : 'Guardar Avaliação'}
                 </button>
               </div>
@@ -740,8 +740,8 @@ export default function AssessmentsTab({
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-      <h3 className="font-semibold text-slate-900 mb-4 text-sm">{title}</h3>
+    <div className="bg-white rounded-xl border border-viper-200 p-5 shadow-sm">
+      <h3 className="font-semibold text-viper-900 mb-4 text-sm">{title}</h3>
       <div className="h-52">
         <ResponsiveContainer width="100%" height="100%">
           {children as React.ReactElement}

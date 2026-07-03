@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Dumbbell, Lock, Mail, ArrowRight, AlertCircle, User, Users, CheckCircle2, Loader2 } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, User, Users, CheckCircle2, Loader2 } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
+import Logo from '../components/Logo';
+import { BRANDING } from '../lib/branding';
 
 type Mode = 'login' | 'activate' | 'register-trainer';
 
@@ -79,7 +81,6 @@ export default function Login() {
           return;
         }
         setTrainerRegistered(true);
-        // Auto-login after registration
         setTimeout(() => {
           signIn(email, password).then(({ error }) => {
             if (error) {
@@ -103,25 +104,28 @@ export default function Login() {
   const showTrainerInfo = mode === 'login';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-slate-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-viper-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative gold glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gold-400/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="w-full max-w-md relative">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/30 mb-4">
-            <Dumbbell className="w-8 h-8 text-white" />
+          <div className="flex justify-center mb-4">
+            <Logo size="lg" showText={false} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">FitPro</h1>
-          <p className="text-slate-500 mt-1 text-sm">
+          <h1 className="text-3xl font-bold text-white tracking-tight">{BRANDING.name}</h1>
+          <p className="text-gold-400 mt-1 text-sm font-medium tracking-wide">
             {mode === 'activate' && 'Ativa a tua conta'}
             {mode === 'register-trainer' && 'Registo de Treinador'}
-            {mode === 'login' && 'Plataforma de Personal Training'}
+            {mode === 'login' && BRANDING.tagline}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+        <div className="bg-viper-800 rounded-2xl shadow-2xl border border-viper-700 p-8">
           {token && mode === 'activate' && (
-            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-              <p className="text-sm text-emerald-700 font-medium">
+            <div className="mb-6 p-4 bg-gold-400/10 border border-gold-400/30 rounded-xl">
+              <p className="text-sm text-gold-300 font-medium">
                 Bem-vindo(a)! Define a tua palavra-passe para ativar a conta.
               </p>
             </div>
@@ -129,25 +133,25 @@ export default function Login() {
 
           {showTrainerInfo && (
             <div className="mb-6 grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-50 border border-emerald-100">
-                <Users className="w-5 h-5 text-emerald-600 shrink-0" />
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-gold-400/10 border border-gold-400/20">
+                <Users className="w-5 h-5 text-gold-400 shrink-0" />
                 <div>
-                  <p className="text-xs font-semibold text-emerald-700">Treinador</p>
-                  <p className="text-[11px] text-emerald-600">Gestão completa</p>
+                  <p className="text-xs font-semibold text-gold-300">Treinador</p>
+                  <p className="text-[11px] text-gold-400/70">Gestão completa</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-blue-50 border border-blue-100">
-                <User className="w-5 h-5 text-blue-600 shrink-0" />
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-viper-700 border border-viper-600">
+                <User className="w-5 h-5 text-viper-200 shrink-0" />
                 <div>
-                  <p className="text-xs font-semibold text-blue-700">Cliente</p>
-                  <p className="text-[11px] text-blue-600">A tua área</p>
+                  <p className="text-xs font-semibold text-viper-100">Cliente</p>
+                  <p className="text-[11px] text-viper-300">A tua área</p>
                 </div>
               </div>
             </div>
           )}
 
           {error && (
-            <div className="mb-4 flex items-start gap-2 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-sm">
+            <div className="mb-4 flex items-start gap-2 p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-sm">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -155,10 +159,10 @@ export default function Login() {
 
           {trainerRegistered && (
             <div className="mb-4 flex flex-col items-center py-6">
-              <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-3" />
-              <p className="font-semibold text-slate-900 mb-1">Conta criada com sucesso!</p>
-              <p className="text-sm text-slate-500 mb-3">A iniciar sessão...</p>
-              <Loader2 className="w-5 h-5 text-emerald-500 animate-spin" />
+              <CheckCircle2 className="w-12 h-12 text-gold-400 mb-3" />
+              <p className="font-semibold text-white mb-1">Conta criada com sucesso!</p>
+              <p className="text-sm text-viper-300 mb-3">A iniciar sessão...</p>
+              <Loader2 className="w-5 h-5 text-gold-400 animate-spin" />
             </div>
           )}
 
@@ -166,43 +170,43 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'register-trainer' && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Nome</label>
+                  <label className="block text-sm font-medium text-viper-200 mb-1.5">Nome</label>
                   <input
                     type="text"
                     required
                     value={trainerName}
                     onChange={e => setTrainerName(e.target.value)}
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                    className="w-full px-3 py-2.5 bg-viper-700 border border-viper-600 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400 placeholder-viper-400"
                     placeholder="O teu nome"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+                <label className="block text-sm font-medium text-viper-200 mb-1.5">Email</label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-viper-400" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                    className="w-full pl-10 pr-3 py-2.5 bg-viper-700 border border-viper-600 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400 placeholder-viper-400"
                     placeholder="o.teu@email.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">Palavra-passe</label>
+                <label className="block text-sm font-medium text-viper-200 mb-1.5">Palavra-passe</label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-viper-400" />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                    className="w-full pl-10 pr-3 py-2.5 bg-viper-700 border border-viper-600 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400 placeholder-viper-400"
                     placeholder="••••••••"
                   />
                 </div>
@@ -210,15 +214,15 @@ export default function Login() {
 
               {(mode === 'activate' || mode === 'register-trainer') && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Confirmar palavra-passe</label>
+                  <label className="block text-sm font-medium text-viper-200 mb-1.5">Confirmar palavra-passe</label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-viper-400" />
                     <input
                       type="password"
                       required
                       value={confirmPassword}
                       onChange={e => setConfirmPassword(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                      className="w-full pl-10 pr-3 py-2.5 bg-viper-700 border border-viper-600 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-gold-400/30 focus:border-gold-400 placeholder-viper-400"
                       placeholder="••••••••"
                     />
                   </div>
@@ -228,7 +232,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-gold-400 to-gold-500 text-viper-900 rounded-lg text-sm font-bold hover:from-gold-300 hover:to-gold-400 transition-all disabled:opacity-50 shadow-lg shadow-gold-500/20"
               >
                 {submitting ? 'A processar...' : mode === 'activate' ? 'Ativar Conta' : mode === 'register-trainer' ? 'Criar Conta de Treinador' : 'Entrar'}
                 <ArrowRight className="w-4 h-4" />
@@ -237,35 +241,35 @@ export default function Login() {
           )}
 
           {!trainerRegistered && (
-            <div className="mt-6 pt-6 border-t border-slate-100 space-y-2 text-center">
+            <div className="mt-6 pt-6 border-t border-viper-700 space-y-2 text-center">
               {mode === 'login' && (
                 <>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-viper-300">
                     Recebeste um convite?{' '}
-                    <button onClick={() => setMode('activate')} className="text-emerald-600 font-medium hover:text-emerald-700">
+                    <button onClick={() => setMode('activate')} className="text-gold-400 font-medium hover:text-gold-300">
                       Ativar conta
                     </button>
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-viper-300">
                     És personal trainer?{' '}
-                    <button onClick={() => setMode('register-trainer')} className="text-emerald-600 font-medium hover:text-emerald-700">
+                    <button onClick={() => setMode('register-trainer')} className="text-gold-400 font-medium hover:text-gold-300">
                       Criar conta de treinador
                     </button>
                   </p>
                 </>
               )}
               {mode === 'activate' && (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-viper-300">
                   Já tens conta?{' '}
-                  <button onClick={() => setMode('login')} className="text-emerald-600 font-medium hover:text-emerald-700">
+                  <button onClick={() => setMode('login')} className="text-gold-400 font-medium hover:text-gold-300">
                     Iniciar sessão
                   </button>
                 </p>
               )}
               {mode === 'register-trainer' && (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-viper-300">
                   Já tens conta?{' '}
-                  <button onClick={() => setMode('login')} className="text-emerald-600 font-medium hover:text-emerald-700">
+                  <button onClick={() => setMode('login')} className="text-gold-400 font-medium hover:text-gold-300">
                     Iniciar sessão
                   </button>
                 </p>
@@ -274,8 +278,8 @@ export default function Login() {
           )}
         </div>
 
-        <p className="text-center text-xs text-slate-400 mt-6">
-          © 2025 FitPro · Plataforma de Personal Training
+        <p className="text-center text-xs text-viper-500 mt-6">
+          © 2025 {BRANDING.name} · {BRANDING.tagline}
         </p>
       </div>
     </div>

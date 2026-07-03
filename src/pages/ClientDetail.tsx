@@ -197,9 +197,9 @@ export default function ClientDetail() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-20 bg-slate-200 rounded-xl animate-pulse" />
-        <div className="h-12 bg-slate-200 rounded-xl animate-pulse" />
-        <div className="h-96 bg-slate-200 rounded-xl animate-pulse" />
+        <div className="h-20 bg-viper-200 rounded-xl animate-pulse" />
+        <div className="h-12 bg-viper-200 rounded-xl animate-pulse" />
+        <div className="h-96 bg-viper-200 rounded-xl animate-pulse" />
       </div>
     );
   }
@@ -207,8 +207,8 @@ export default function ClientDetail() {
   if (!client) {
     return (
       <div className="text-center py-20">
-        <p className="text-slate-500 font-medium">Cliente não encontrado</p>
-        <button onClick={() => navigate('/clientes')} className="mt-4 inline-flex items-center gap-2 text-emerald-600 font-medium hover:text-emerald-700">
+        <p className="text-viper-500 font-medium">Cliente não encontrado</p>
+        <button onClick={() => navigate('/clientes')} className="mt-4 inline-flex items-center gap-2 text-gold-600 font-medium hover:text-gold-700">
           <ArrowLeft className="w-4 h-4" /> Voltar
         </button>
       </div>
@@ -219,16 +219,16 @@ export default function ClientDetail() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <button onClick={() => navigate('/clientes')} className="mt-1 p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors">
+        <button onClick={() => navigate('/clientes')} className="mt-1 p-2 rounded-lg hover:bg-viper-100 text-viper-500 transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xl shrink-0">
+          <div className="w-14 h-14 rounded-full bg-gold-100 flex items-center justify-center text-gold-700 font-bold text-xl shrink-0">
             {client.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{client.name}</h1>
-            <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-slate-500">
+            <h1 className="text-2xl font-bold text-viper-900">{client.name}</h1>
+            <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-viper-500">
               {client.email && <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" />{client.email}</span>}
               {client.phone && <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" />{client.phone}</span>}
               {client.birth_date && <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{client.birth_date}</span>}
@@ -239,13 +239,13 @@ export default function ClientDetail() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 bg-white rounded-xl border border-slate-200 p-1 overflow-x-auto">
+      <div className="flex gap-1 bg-white rounded-xl border border-viper-200 p-1 overflow-x-auto">
         {TABS.map(t => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`px-5 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-              tab === t.key ? 'bg-emerald-50 text-emerald-700 shadow-sm' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              tab === t.key ? 'bg-gold-50 text-gold-700 shadow-sm' : 'text-viper-600 hover:bg-viper-50 hover:text-viper-900'
             }`}
           >
             {t.label}

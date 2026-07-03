@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitpro-v1';
+const CACHE_NAME = 'viper-factory-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
