@@ -6,6 +6,7 @@ import Clients from './pages/Clients';
 import ClientDetail from './pages/ClientDetail';
 import FoodsLibrary from './pages/FoodsLibrary';
 import ExercisesLibrary from './pages/ExercisesLibrary';
+import Appointments from './pages/Appointments';
 import Login from './pages/Login';
 import ActivateAccount from './pages/ActivateAccount';
 import ClientArea from './pages/ClientArea';
@@ -27,7 +28,7 @@ export function useAppMode() {
 
 function FullScreenLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center bg-viper-50">
       <div className="w-8 h-8 border-3 border-gold-400 border-t-transparent rounded-full animate-spin" />
     </div>
   );
@@ -92,6 +93,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/clientes" element={<Clients />} />
             <Route path="/clientes/:clienteId" element={<ClientDetail />} />
+            <Route path="/agenda" element={<Appointments />} />
             <Route path="/alimentos" element={<FoodsLibrary />} />
             <Route path="/exercicios" element={<ExercisesLibrary />} />
           </Route>

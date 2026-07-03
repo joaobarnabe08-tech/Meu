@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Dumbbell, UtensilsCrossed, Ruler, Camera, Calendar, ClipboardList,
-  Bell, LogOut, ChevronRight, TrendingUp, Activity, Clock, Play, X,
+  Bell, LogOut, ChevronRight, TrendingUp, Activity, Clock, Play, X, CalendarClock,
+  MapPin, User,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
@@ -18,7 +19,9 @@ type NutritionMeal = Database['public']['Tables']['nutrition_meals']['Row'];
 type PhysicalAssessment = Database['public']['Tables']['physical_assessments']['Row'];
 type Anamnese = Database['public']['Tables']['anamneses']['Row'];
 
-type Tab = 'treino' | 'nutricao' | 'medidas' | 'fotos' | 'calendario' | 'avaliacoes' | 'notificacoes';
+type Tab = 'treino' | 'nutricao' | 'medidas' | 'fotos' | 'calendario' | 'agenda' | 'avaliacoes' | 'notificacoes';
+
+type Appointment = Database['public']['Tables']['appointments']['Row'];
 
 export default function ClientArea() {
   const { clientProfile, user, signOut, loading } = useAuth();
@@ -31,6 +34,7 @@ export default function ClientArea() {
   const [meals, setMeals] = useState<Record<string, NutritionMeal[]>>({});
   const [assessments, setAssessments] = useState<PhysicalAssessment[]>([]);
   const [anamnese, setAnamnese] = useState<Anamnese | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [videoModal, setVideoModal] = useState<{ url: string; name: string } | null>(null);
 
@@ -49,12 +53,13 @@ export default function ClientArea() {
     setDataLoading(true);
     const clientId = clientProfile.id;
 
-    const [c, w, p, a, an] = await Promise.all([
+    const [c, w, p, a, an, ap] = await Promise.all([
       supabase.from('clients').select('*').eq('id', clientId).maybeSingle(),
       supabase.from('workouts').select('*').eq('client_id', clientId).order('created_at', { ascending: false }),
       supabase.from('nutrition_plans').select('*').eq('client_id', clientId).order('created_at', { ascending: false }),
       supabase.from('physical_assessments').select('*').eq('client_id', clientId).order('assessment_date', { ascending: true }),
       supabase.from('anamneses').select('*').eq('client_id', clientId).maybeSingle(),
+      supabase.from('appointments').select('*').eq('client_id', clientId).order('appointment_date', { ascending: true }).order('start_time', { ascending: true }),
     ]);
 
     setClient(c.data as Client | null);
@@ -62,6 +67,7 @@ export default function ClientArea() {
     setPlans(p.data ?? []);
     setAssessments(a.data ?? []);
     setAnamnese(an.data as Anamnese | null);
+    setAppointments(ap.data ?? []);
 
     // Load exercises for each workout
     const exResults: Record<string, WorkoutExercise[]> = {};
@@ -119,6 +125,7 @@ export default function ClientArea() {
     { id: 'medidas', label: 'Medidas', icon: Ruler },
     { id: 'fotos', label: 'Fotos', icon: Camera },
     { id: 'calendario', label: 'Calendário', icon: Calendar },
+    { id: 'agenda', label: 'Agenda', icon: CalendarClock },
     { id: 'avaliacoes', label: 'Avaliações', icon: ClipboardList },
     { id: 'notificacoes', label: 'Notificações', icon: Bell },
   ];
@@ -171,6 +178,7 @@ export default function ClientArea() {
         {tab === 'medidas' && <MeasurementsTab assessments={assessments} latest={latest} />}
         {tab === 'fotos' && <PhotosTab clientId={clientProfile.id} />}
         {tab === 'calendario' && <CalendarTab workouts={activeWorkouts} />}
+        {tab === 'agenda' && <ClientAppointmentsTab appointments={appointments} />}
         {tab === 'avaliacoes' && <AssessmentsTab assessments={assessments} anamnese={anamnese} />}
         {tab === 'notificacoes' && <NotificationsTab />}
       </main>
@@ -440,6 +448,64 @@ function NotificationsTab() {
       <Bell className="w-12 h-12 text-viper-200 mx-auto mb-3" />
       <p className="text-viper-500 font-medium">Sem notificações</p>
       <p className="text-sm text-viper-400 mt-1">As notificações do teu treinador aparecerão aqui.</p>
+    </div>
+  );
+}
+
+function ClientAppointmentsTab({ appointments }: { appointments: Appointment[] }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const upcoming = appointments.filter(a => a.appointment_date >= today && a.status === 'scheduled');
+  const past = appointments.filter(a => a.appointment_date < today || a.status !== 'scheduled');
+
+  const statusConfig: Record<string, { label: string; dot: string; badge: string }> = {
+    scheduled: { label: 'Agendada', dot: 'bg-gold-400', badge: 'bg-gold-50 text-gold-700 border-gold-200' },
+    completed: { label: 'Concluída', dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    cancelled: { label: 'Cancelada', dot: 'bg-rose-400', badge: 'bg-rose-50 text-rose-700 border-rose-200' },
+  };
+
+  if (appointments.length === 0) return <EmptyState icon={CalendarClock} title="Sem marcações" subtitle="O teu treinador ainda não agendou sessões contigo." />;
+
+  function renderAppt(a: Appointment) {
+    const sc = statusConfig[a.status] || statusConfig.scheduled;
+    const date = new Date(a.appointment_date + 'T00:00:00');
+    return (
+      <div key={a.id} className="bg-white rounded-xl border border-viper-200 p-4 shadow-sm">
+        <div className="flex items-start gap-3">
+          <div className="w-12 h-12 rounded-lg bg-gold-50 border border-gold-100 flex flex-col items-center justify-center shrink-0">
+            <span className="text-[10px] font-bold text-gold-600 uppercase">{date.toLocaleDateString('pt-PT', { month: 'short' }).replace('.', '')}</span>
+            <span className="text-lg font-bold text-viper-900 leading-none">{date.getDate()}</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className={`w-2 h-2 rounded-full ${sc.dot} shrink-0`} />
+              <h4 className="font-semibold text-viper-900 text-sm">{a.title}</h4>
+            </div>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-viper-500">
+              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{a.start_time.slice(0, 5)}{a.end_time ? ` - ${a.end_time.slice(0, 5)}` : ''}</span>
+              {a.location && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{a.location}</span>}
+            </div>
+            {a.notes && <p className="text-xs text-viper-400 mt-1.5">{a.notes}</p>}
+            <span className={`inline-block mt-2 px-2 py-0.5 rounded-full text-[10px] font-medium border ${sc.badge}`}>{sc.label}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {upcoming.length > 0 && (
+        <div>
+          <h3 className="font-bold text-viper-900 mb-3 flex items-center gap-2"><CalendarClock className="w-4 h-4 text-gold-500" /> Próximas Sessões</h3>
+          <div className="space-y-3">{upcoming.map(renderAppt)}</div>
+        </div>
+      )}
+      {past.length > 0 && (
+        <div>
+          <h3 className="font-bold text-viper-900 mb-3 flex items-center gap-2"><Clock className="w-4 h-4 text-viper-400" /> Histórico</h3>
+          <div className="space-y-3">{past.map(renderAppt)}</div>
+        </div>
+      )}
     </div>
   );
 }

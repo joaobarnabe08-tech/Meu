@@ -190,6 +190,23 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['nutrition_meals']['Row'], 'id'> & { id?: string };
         Update: Partial<Database['public']['Tables']['nutrition_meals']['Row']>;
       };
+      appointments: {
+        Row: {
+          id: string;
+          client_id: string;
+          title: string;
+          appointment_date: string;
+          start_time: string;
+          end_time: string | null;
+          location: string | null;
+          notes: string | null;
+          status: string;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: Omit<Database['public']['Tables']['appointments']['Row'], 'id' | 'created_at' | 'updated_at'> & { id?: string; created_at?: string | null; updated_at?: string | null };
+        Update: Partial<Database['public']['Tables']['appointments']['Row']>;
+      };
     };
   };
 };

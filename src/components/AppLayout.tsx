@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, Menu, X, Upload, ImageIcon, BookOpen, Dumbbell, LogOut,
+  LayoutDashboard, Users, Menu, X, Upload, ImageIcon, BookOpen, Dumbbell, LogOut, Calendar,
 } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import Logo from './Logo';
@@ -9,6 +9,7 @@ import Logo from './Logo';
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/clientes', label: 'Clientes', icon: Users },
+  { path: '/agenda', label: 'Agenda', icon: Calendar },
   { path: '/exercicios', label: 'Exercícios', icon: Dumbbell },
   { path: '/alimentos', label: 'Alimentos', icon: BookOpen },
 ];
