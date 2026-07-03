@@ -60,11 +60,13 @@ export default function Clients() {
   async function sendInvite(client: Client) {
     setInviteStatus('sending');
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token || import.meta.env.VITE_SUPABASE_ANON_KEY;
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invite`;
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

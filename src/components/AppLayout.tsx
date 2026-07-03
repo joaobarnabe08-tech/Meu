@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, Menu, X, Activity, ChevronRight, Upload, ImageIcon, BookOpen, Dumbbell,
+  LayoutDashboard, Users, Menu, X, Upload, ImageIcon, BookOpen, Dumbbell, LogOut,
 } from 'lucide-react';
-import { useAppMode } from '../App';
+import { useAuth } from '../lib/auth';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -14,6 +14,8 @@ const navItems = [
 
 export default function AppLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [logo, setLogo] = useState<string | null>(() => localStorage.getItem('fitpro_logo'));
   const fileRef = useRef<HTMLInputElement>(null);
@@ -37,6 +39,11 @@ export default function AppLayout() {
     setLogo(null);
     localStorage.removeItem('fitpro_logo');
     if (fileRef.current) fileRef.current.value = '';
+  }
+
+  async function handleSignOut() {
+    await signOut();
+    navigate('/login');
   }
 
   const SidebarHeader = () => (
@@ -74,59 +81,27 @@ export default function AppLayout() {
     </div>
   );
 
-  const NavItems = ({ onClose }: { onClose?: () => void }) => {
-    const { mode, setMode, isTrainer } = useAppMode();
-    return (
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.path);
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={onClose}
-              className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all ${
-                active ? 'bg-emerald-500/15 text-emerald-400' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <Icon className="w-5 h-5 shrink-0" />
-              {item.label}
-              {active && <ChevronRight className="w-4 h-4 ml-auto" />}
-            </Link>
-          );
-        })}
-
-        <div className="pt-4 mt-4 border-t border-slate-700">
-          <div className="px-3 py-2">
-            <p className="text-xs text-slate-400 font-medium mb-2">Modo de Visualização</p>
-            <div className="flex bg-slate-800 rounded-lg p-0.5">
-              <button
-                onClick={() => setMode('trainer')}
-                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-xs font-medium transition-all ${
-                  isTrainer ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <Users className="w-3.5 h-3.5" />
-                Treinador
-              </button>
-              <button
-                onClick={() => setMode('client')}
-                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-xs font-medium transition-all ${
-                  !isTrainer ? 'bg-blue-500 text-white' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <Activity className="w-3.5 h-3.5" />
-                Cliente
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-    );
-  };
-
-  const { isTrainer } = useAppMode();
+  const NavItems = ({ onClose }: { onClose?: () => void }) => (
+    <nav className="flex-1 px-3 py-4 space-y-1">
+      {navItems.map((item) => {
+        const Icon = item.icon;
+        const active = isActive(item.path);
+        return (
+          <Link
+            key={item.path}
+            to={item.path}
+            onClick={onClose}
+            className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all ${
+              active ? 'bg-emerald-500/15 text-emerald-400' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <Icon className="w-5 h-5 shrink-0" />
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -135,15 +110,21 @@ export default function AppLayout() {
         <SidebarHeader />
         <NavItems />
         <div className="px-4 py-4 border-t border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className={`w-9 h-9 rounded-full flex items-center justify-center ${isTrainer ? 'bg-slate-700' : 'bg-blue-500/20'}`}>
-              {isTrainer ? <Users className="w-4 h-4 text-emerald-400" /> : <Activity className="w-4 h-4 text-blue-400" />}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 rounded-full flex items-center justify-center bg-slate-700">
+              <Users className="w-4 h-4 text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-white">{isTrainer ? 'Modo Treinador' : 'Modo Cliente'}</p>
-              <p className="text-xs text-slate-400">{isTrainer ? 'Edição completa' : 'Só visualização'}</p>
+              <p className="text-sm font-medium text-white">Modo Treinador</p>
+              <p className="text-xs text-slate-400">Edição completa</p>
             </div>
           </div>
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-rose-500/10 hover:text-rose-400 transition-colors"
+          >
+            <LogOut className="w-4 h-4" /> Terminar sessão
+          </button>
         </div>
       </aside>
 
@@ -164,7 +145,7 @@ export default function AppLayout() {
           ) : (
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center">
-                <Activity className="w-4 h-4 text-white" />
+                <Dumbbell className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold text-white">FitPro</span>
             </div>
@@ -174,6 +155,14 @@ export default function AppLayout() {
           </button>
         </div>
         <NavItems onClose={() => setMobileOpen(false)} />
+        <div className="px-4 py-4 border-t border-slate-800">
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-300 hover:bg-rose-500/10 hover:text-rose-400 transition-colors"
+          >
+            <LogOut className="w-4 h-4" /> Terminar sessão
+          </button>
+        </div>
       </aside>
 
       {/* Main */}
@@ -188,7 +177,7 @@ export default function AppLayout() {
           ) : (
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center">
-                <Activity className="w-4 h-4 text-white" />
+                <Dumbbell className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold text-slate-800">FitPro</span>
             </div>

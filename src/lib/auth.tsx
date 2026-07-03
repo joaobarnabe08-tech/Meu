@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 
+type UserRole = 'trainer' | 'client' | null;
+
 type ClientProfile = {
   id: string;
   name: string;
@@ -12,6 +14,7 @@ type ClientProfile = {
 type AuthContextType = {
   session: Session | null;
   user: User | null;
+  role: UserRole;
   clientProfile: ClientProfile | null;
   loading: boolean;
   isTrainer: boolean;
@@ -24,6 +27,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
+  role: null,
   clientProfile: null,
   loading: true,
   isTrainer: false,
@@ -40,16 +44,36 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<UserRole>(null);
   const [clientProfile, setClientProfile] = useState<ClientProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function loadClientProfile(uid: string) {
-    const { data } = await supabase
+  async function loadUserRole(uid: string) {
+    // Check app_meta_data for role (set during account creation)
+    // The user object from the session includes user_metadata but NOT app_metadata
+    // We need to check via a database function or the user's raw_app_meta_data
+    // Since is_trainer() is a SECURITY DEFINER function, we can call it via RPC
+    const { data: isTrainerResult } = await supabase.rpc('is_trainer');
+    if (isTrainerResult === true) {
+      setRole('trainer');
+      setClientProfile(null);
+      return;
+    }
+
+    // Not a trainer — check if linked to a client profile
+    const { data: client } = await supabase
       .from('clients')
       .select('id, name, email, auth_user_id')
       .eq('auth_user_id', uid)
       .maybeSingle();
-    setClientProfile(data as ClientProfile | null);
+
+    if (client) {
+      setRole('client');
+      setClientProfile(client as ClientProfile);
+    } else {
+      setRole(null);
+      setClientProfile(null);
+    }
   }
 
   useEffect(() => {
@@ -58,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(data.session?.user ?? null);
       if (data.session?.user) {
         (async () => {
-          await loadClientProfile(data.session!.user.id);
+          await loadUserRole(data.session!.user.id);
           setLoading(false);
         })();
       } else {
@@ -71,8 +95,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(newSession);
         setUser(newSession?.user ?? null);
         if (newSession?.user) {
-          await loadClientProfile(newSession.user.id);
+          await loadUserRole(newSession.user.id);
         } else {
+          setRole(null);
           setClientProfile(null);
         }
         setLoading(false);
@@ -96,15 +121,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
+    setRole(null);
     setClientProfile(null);
   }
 
-  const isClient = !!user && !!clientProfile;
-  const isTrainer = !user;
+  const isTrainer = role === 'trainer';
+  const isClient = role === 'client';
 
   return (
     <AuthContext.Provider
-      value={{ session, user, clientProfile, loading, isTrainer, isClient, signIn, signUp, signOut }}
+      value={{ session, user, role, clientProfile, loading, isTrainer, isClient, signIn, signUp, signOut }}
     >
       {children}
     </AuthContext.Provider>

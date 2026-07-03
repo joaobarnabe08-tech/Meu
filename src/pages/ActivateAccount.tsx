@@ -39,7 +39,7 @@ export default function ActivateAccount() {
 
     if (data.status === 'accepted') {
       // Already activated, redirect to login
-      navigate('/login-cliente');
+      navigate('/login');
       return;
     }
 
@@ -109,7 +109,7 @@ export default function ActivateAccount() {
 
     setSubmitting(false);
     setStep('success');
-    setTimeout(() => navigate('/login-cliente'), 3000);
+    setTimeout(() => navigate('/login'), 3000);
   }
 
   // If already logged in and linked, redirect
@@ -141,7 +141,7 @@ export default function ActivateAccount() {
               <AlertCircle className="w-12 h-12 text-rose-400 mx-auto mb-4" />
               <h2 className="text-lg font-bold text-slate-900 mb-2">Convite inválido</h2>
               <p className="text-sm text-slate-500 mb-6">O link de convite não é válido ou foi removido.</p>
-              <button onClick={() => navigate('/login-cliente')} className="text-sm text-emerald-600 font-medium hover:text-emerald-700">
+              <button onClick={() => navigate('/login')} className="text-sm text-emerald-600 font-medium hover:text-emerald-700">
                 Ir para início de sessão
               </button>
             </div>
