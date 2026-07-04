@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plus, X, ChevronDown, ChevronUp, UtensilsCrossed, Flame, Beef, Wheat, Droplets, Trash2, Clock, Search, BookOpen, Eye } from 'lucide-react';
+import { Plus, X, ChevronDown, ChevronUp, UtensilsCrossed, Flame, Beef, Wheat, Droplets, Trash2, Clock, Search, BookOpen, Eye, FileDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { PlanWithMeals } from '../pages/ClientDetail';
 import type { Database } from '../lib/database.types';
 import { useAppMode } from '../App';
+import { exportNutritionPDF } from '../lib/pdf';
 
 type FoodLibItem = Database['public']['Tables']['foods_library']['Row'];
 
@@ -145,6 +146,9 @@ export default function NutritionTab({
   onDeleteMeal,
   onDeletePlan,
   foodsLibrary,
+  clientName,
+  clientEmail,
+  anamneseGoal,
 }: {
   plans: PlanWithMeals[];
   onAddPlan: (p: { name: string; daily_calories: number | null }) => Promise<void>;
@@ -152,10 +156,34 @@ export default function NutritionTab({
   onDeleteMeal: (planId: string, mealId: string) => Promise<void>;
   onDeletePlan: (planId: string) => Promise<void>;
   foodsLibrary: FoodLibItem[];
+  clientName?: string;
+  clientEmail?: string | null;
+  anamneseGoal?: string | null;
 }) {
   const { isTrainer } = useAppMode();
   const canEdit = isTrainer;
   const navigate = useNavigate();
+
+  function handleExportPDF(plan: PlanWithMeals) {
+    exportNutritionPDF({
+      clientName: clientName || 'Cliente',
+      clientEmail,
+      planName: plan.name,
+      dailyCalories: plan.daily_calories,
+      goal: anamneseGoal,
+      meals: plan.nutrition_meals.map(m => ({
+        meal_name: m.meal_name,
+        time: m.time,
+        foods: m.foods,
+        calories: m.calories,
+        proteins: m.proteins,
+        carbs: m.carbs,
+        fats: m.fats,
+      })),
+      notes: null,
+    });
+  }
+
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [showPlanForm, setShowPlanForm] = useState(false);
   const [planForm, setPlanForm] = useState({ name: '', daily_calories: '' });
@@ -280,6 +308,13 @@ export default function NutritionTab({
                 </button>
                 <div className="flex items-center gap-2 shrink-0">
                   {plan.is_active && <span className="px-2 py-1 rounded-full bg-gold-100 text-gold-700 text-xs font-medium">Ativo</span>}
+                  <button
+                    onClick={() => handleExportPDF(plan)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-viper-600 bg-viper-50 hover:bg-gold-50 hover:text-gold-600 rounded-lg border border-viper-200 transition-colors"
+                    title="Exportar PDF"
+                  >
+                    <FileDown className="w-3.5 h-3.5" /> PDF
+                  </button>
                   {canEdit && (
                     <button onClick={() => { if (confirm('Eliminar este plano?')) onDeletePlan(plan.id); }} className="w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center justify-center text-viper-400 hover:text-rose-500 transition-colors">
                       <Trash2 className="w-4 h-4" />

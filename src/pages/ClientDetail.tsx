@@ -257,7 +257,15 @@ export default function ClientDetail() {
         <ProfileTab client={client} anamnese={anamnese} onSaveAnamnese={saveAnamnese} />
       )}
       {tab === 'assessments' && (
-        <AssessmentsTab assessments={assessments} onAdd={addAssessment} clientId={clienteId} clientBirthDate={client.birth_date} />
+        <AssessmentsTab
+          assessments={assessments}
+          onAdd={addAssessment}
+          clientId={clienteId}
+          clientBirthDate={client.birth_date}
+          clientName={client.name}
+          clientEmail={client.email}
+          anamneseGoal={anamnese?.goals}
+        />
       )}
       {tab === 'workouts' && (
         <WorkoutsTab
@@ -277,6 +285,9 @@ export default function ClientDetail() {
           onDeleteMeal={deleteMeal}
           onDeletePlan={deletePlan}
           foodsLibrary={foodsLibrary}
+          clientName={client.name}
+          clientEmail={client.email}
+          anamneseGoal={anamnese?.goals}
         />
       )}
     </div>
