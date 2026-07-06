@@ -7,6 +7,7 @@ import ProfileTab from '../components/ProfileTab';
 import AssessmentsTab from '../components/AssessmentsTab';
 import WorkoutsTab from '../components/WorkoutsTab';
 import NutritionTab from '../components/NutritionTab';
+import NotificationsTab from '../components/NotificationsTab';
 
 type Client = Database['public']['Tables']['clients']['Row'];
 type Anamnese = Database['public']['Tables']['anamneses']['Row'];
@@ -26,6 +27,7 @@ const TABS = [
   { key: 'assessments', label: 'Avaliações' },
   { key: 'workouts', label: 'Treinos' },
   { key: 'nutrition', label: 'Nutrição' },
+  { key: 'notifications', label: 'Notificações' },
 ] as const;
 
 type Tab = typeof TABS[number]['key'];
@@ -289,6 +291,10 @@ export default function ClientDetail() {
           clientEmail={client.email}
           anamneseGoal={anamnese?.goals}
         />
+      )}
+
+      {tab === 'notifications' && (
+        <NotificationsTab clientId={clienteId!} clientName={client.name} />
       )}
     </div>
   );

@@ -18,6 +18,7 @@ type NutritionPlan = Database['public']['Tables']['nutrition_plans']['Row'];
 type NutritionMeal = Database['public']['Tables']['nutrition_meals']['Row'];
 type PhysicalAssessment = Database['public']['Tables']['physical_assessments']['Row'];
 type Anamnese = Database['public']['Tables']['anamneses']['Row'];
+type NotificationRow = Database['public']['Tables']['notifications']['Row'];
 
 type Tab = 'treino' | 'nutricao' | 'medidas' | 'fotos' | 'calendario' | 'agenda' | 'avaliacoes' | 'notificacoes';
 
@@ -180,7 +181,7 @@ export default function ClientArea() {
         {tab === 'calendario' && <CalendarTab workouts={activeWorkouts} />}
         {tab === 'agenda' && <ClientAppointmentsTab appointments={appointments} />}
         {tab === 'avaliacoes' && <AssessmentsTab assessments={assessments} anamnese={anamnese} />}
-        {tab === 'notificacoes' && <NotificationsTab />}
+        {tab === 'notificacoes' && <NotificationsTab clientId={clientProfile.id} />}
       </main>
 
       {videoModal && (
@@ -442,12 +443,65 @@ function AssessmentsTab({ assessments, anamnese }: { assessments: PhysicalAssess
   );
 }
 
-function NotificationsTab() {
+function NotificationsTab({ clientId }: { clientId: string }) {
+  const [notifications, setNotifications] = useState<NotificationRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('client_id', clientId)
+        .order('created_at', { ascending: false });
+      setNotifications((data as NotificationRow[]) || []);
+      setLoading(false);
+      // Mark all as read on view
+      if (data && data.length > 0) {
+        const unread = data.filter(n => !n.is_read);
+        if (unread.length > 0) {
+          await supabase.from('notifications').update({ is_read: true }).in('id', unread.map(n => n.id));
+        }
+      }
+    })();
+  }, [clientId]);
+
+  if (loading) return <div className="text-center py-8 text-sm text-viper-400">A carregar notificações...</div>;
+
+  if (notifications.length === 0) {
+    return (
+      <div className="bg-white rounded-xl border border-viper-200 p-8 shadow-sm text-center">
+        <Bell className="w-12 h-12 text-viper-200 mx-auto mb-3" />
+        <p className="text-viper-500 font-medium">Sem notificações</p>
+        <p className="text-sm text-viper-400 mt-1">As notificações do teu treinador aparecerão aqui.</p>
+      </div>
+    );
+  }
+
+  const TYPE_ICON: Record<string, typeof Bell> = { workout: Dumbbell, plan: UtensilsCrossed, appointment: Calendar, custom: Bell };
+  const TYPE_COLOR: Record<string, string> = { workout: 'text-gold-600 bg-gold-100', plan: 'text-emerald-600 bg-emerald-100', appointment: 'text-blue-600 bg-blue-100', custom: 'text-viper-600 bg-viper-100' };
+
   return (
-    <div className="bg-white rounded-xl border border-viper-200 p-8 shadow-sm text-center">
-      <Bell className="w-12 h-12 text-viper-200 mx-auto mb-3" />
-      <p className="text-viper-500 font-medium">Sem notificações</p>
-      <p className="text-sm text-viper-400 mt-1">As notificações do teu treinador aparecerão aqui.</p>
+    <div className="space-y-2">
+      <h3 className="font-bold text-viper-900 mb-2">As tuas notificações</h3>
+      {notifications.map(n => {
+        const Icon = TYPE_ICON[n.type] || Bell;
+        const color = TYPE_COLOR[n.type] || TYPE_COLOR.custom;
+        return (
+          <div key={n.id} className="bg-white rounded-xl border border-viper-200 p-4 shadow-sm flex items-start gap-3">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+              <Icon className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-viper-900 text-sm">{n.title}</h4>
+              <p className="text-sm text-viper-600 mt-0.5">{n.message}</p>
+              <p className="text-xs text-viper-400 mt-1">
+                {new Date(n.created_at).toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              </p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -207,6 +207,20 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['appointments']['Row'], 'id' | 'created_at' | 'updated_at'> & { id?: string; created_at?: string | null; updated_at?: string | null };
         Update: Partial<Database['public']['Tables']['appointments']['Row']>;
       };
+      notifications: {
+        Row: {
+          id: string;
+          client_id: string;
+          type: 'workout' | 'plan' | 'appointment' | 'custom';
+          title: string;
+          message: string;
+          related_id: string | null;
+          is_read: boolean;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['notifications']['Row'], 'id' | 'is_read' | 'created_at'> & { id?: string; is_read?: boolean; created_at?: string };
+        Update: Partial<Database['public']['Tables']['notifications']['Row']>;
+      };
     };
   };
 };
